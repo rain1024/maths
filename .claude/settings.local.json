@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node:*)",
+      "Bash(yarn init:*)",
+      "Bash(yarn test)",
+      "Bash(yarn add:*)",
+      "Bash(yarn:*)",
+      "Bash(cat:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
