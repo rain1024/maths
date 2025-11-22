@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài Toán Vòng Tròn - Minh Họa Tương Tác</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .problem {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .input-section {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .input-group {
+            margin: 10px 0;
+        }
+        label {
+            display: inline-block;
+            width: 250px;
+            font-weight: bold;
+        }
+        input {
+            padding: 8px;
+            width: 150px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        .result {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .result h2 {
+            color: #4CAF50;
+            margin-top: 0;
+        }
+        .visualization {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .circle-container {
+            width: 500px;
+            height: 500px;
+            margin: 30px auto;
+            position: relative;
+        }
+        .person {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #2196F3;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        .person.highlight {
+            background: #f44336;
+            transform: scale(1.5);
+            z-index: 10;
+            box-shadow: 0 0 20px rgba(244, 67, 54, 0.8);
+        }
+        .explanation {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 15px;
+            border-left: 4px solid #2196F3;
+        }
+        .formula {
+            font-family: 'Courier New', monospace;
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .number-list {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .number-list h4 {
+            margin-top: 0;
+        }
+        .numbers {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        .number-item {
+            background: #2196F3;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-weight: bold;
+            min-width: 50px;
+            text-align: center;
+        }
+        .number-item.target {
+            background: #f44336;
+            transform: scale(1.1);
+            box-shadow: 0 2px 8px rgba(244, 67, 54, 0.5);
+        }
+        @media (max-width: 768px) {
+            .circle-container {
+                width: 300px;
+                height: 300px;
+            }
+            .person {
+                width: 30px;
+                height: 30px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Bài Toán Vòng Tròn - Minh Họa Tương Tác</h1>
+
+    <div class="problem">
+        <h2>Đề Bài</h2>
+        <p id="problem-text">Có <strong>20</strong> người đứng thành vòng tròn, tất cả đều quay mặt vào tâm, các vị trí đứng được đánh số thứ tự từ 1 đến <strong>20</strong> theo chiều kim đồng hồ. Họ đọc các số tự nhiên từ 1, 2, 3, ... theo chiều kim đồng hồ như sau:</p>
+        <ul>
+            <li>Người đứng ở vị trí thứ nhất đọc số 1.</li>
+            <li>Người đứng ở vị trí thứ hai đọc số 2.</li>
+            <li>Người đứng ở vị trí thứ ba đọc số 3.</li>
+            <li>...</li>
+        </ul>
+        <p>Người kế tiếp đọc số tự nhiên lớn hơn 1 đơn vị so với số mình vừa nghe của người bên cạnh đọc.</p>
+        <p id="question-text"><strong>Hỏi người đứng ở vị trí bao nhiêu sẽ đọc số <span id="target-display">2012</span>?</strong></p>
+    </div>
+
+    <div class="input-section">
+        <h2>Tham Số Đầu Vào</h2>
+        <div class="input-group">
+            <label>Số người trong vòng tròn:</label>
+            <input type="number" id="numPeople" value="20" min="2" max="100">
+        </div>
+        <div class="input-group">
+            <label>Số cần tìm:</label>
+            <input type="number" id="target" value="2012" min="1">
+        </div>
+        <button onclick="calculate()">Tính Toán & Minh Họa</button>
+    </div>
+
+    <div id="result-container" style="display:none;">
+        <div class="result">
+            <h2>Kết Quả</h2>
+            <p id="answer"></p>
+
+            <div class="explanation">
+                <h3>Giải Thích:</h3>
+                <div id="explanation-content"></div>
+
+                <div class="formula">
+                    <strong>Công thức:</strong><br>
+                    $$P = \begin{cases}
+                    \text{target} \bmod n & \text{if } \text{target} \bmod n \neq 0 \\
+                    n & \text{if } \text{target} \bmod n = 0
+                    \end{cases}$$
+                    <p style="margin-top: 10px; font-size: 14px;">
+                        Trong đó: \(P\) = vị trí cần tìm, \(n\) = số người trong vòng tròn
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="visualization">
+            <h2>Minh Họa Vòng Tròn</h2>
+            <div class="circle-container" id="circle"></div>
+            <p style="text-align: center; color: #666;">
+                <strong>Màu xanh:</strong> Vị trí bình thường |
+                <strong>Màu đỏ (lớn hơn):</strong> Vị trí đọc số cần tìm
+            </p>
+        </div>
+
+        <div class="result">
+            <h2>Các Số Đã Đọc</h2>
+            <div class="number-list">
+                <h4>Người ở vị trí <span id="position-display"></span> đã đọc các số sau:</h4>
+                <div class="numbers" id="numbers-list"></div>
+                <p style="margin-top: 15px; color: #666;">
+                    <em>Tổng số đã đọc: <strong id="count-display"></strong> số</em><br>
+                    <em>(Hiển thị tối đa 20 số đầu tiên)</em>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function findPosition(numPeople, target) {
+            const position = target % numPeople;
+            return position === 0 ? numPeople : position;
+        }
+
+        function countRounds(numPeople, target) {
+            return Math.floor((target - 1) / numPeople);
+        }
+
+        function getNumbersReadByPosition(numPeople, position, maxNumber) {
+            const numbers = [];
+            let current = position;
+
+            while (current <= maxNumber) {
+                numbers.push(current);
+                current += numPeople;
+            }
+
+            return numbers;
+        }
+
+        function drawCircle(numPeople, highlightPosition) {
+            const container = document.getElementById('circle');
+            container.innerHTML = '';
+
+            const radius = 200;
+            const centerX = 250;
+            const centerY = 250;
+
+            for (let i = 1; i <= numPeople; i++) {
+                // Tính góc (bắt đầu từ trên cùng, quay theo chiều kim đồng hồ)
+                const angle = (i - 1) * (2 * Math.PI / numPeople) - Math.PI / 2;
+                const x = centerX + radius * Math.cos(angle);
+                const y = centerY + radius * Math.sin(angle);
+
+                const person = document.createElement('div');
+                person.className = 'person';
+                if (i === highlightPosition) {
+                    person.className += ' highlight';
+                }
+                person.textContent = i;
+                person.style.left = (x - 20) + 'px';
+                person.style.top = (y - 20) + 'px';
+
+                container.appendChild(person);
+            }
+        }
+
+        function calculate() {
+            const numPeople = parseInt(document.getElementById('numPeople').value);
+            const target = parseInt(document.getElementById('target').value);
+
+            if (numPeople < 2) {
+                alert('Số người phải ít nhất là 2!');
+                return;
+            }
+
+            if (target < 1) {
+                alert('Số cần tìm phải lớn hơn 0!');
+                return;
+            }
+
+            // Cập nhật đề bài
+            document.getElementById('problem-text').innerHTML =
+                `Có <strong>${numPeople}</strong> người đứng thành vòng tròn, tất cả đều quay mặt vào tâm, các vị trí đứng được đánh số thứ tự từ 1 đến <strong>${numPeople}</strong> theo chiều kim đồng hồ. Họ đọc các số tự nhiên từ 1, 2, 3, ... theo chiều kim đồng hồ.`;
+            document.getElementById('target-display').textContent = target;
+
+            // Tính toán
+            const position = findPosition(numPeople, target);
+            const rounds = countRounds(numPeople, target);
+            const numbersRead = getNumbersReadByPosition(numPeople, position, target);
+
+            // Hiển thị kết quả
+            document.getElementById('result-container').style.display = 'block';
+            document.getElementById('answer').innerHTML =
+                `<strong style="font-size: 1.3em; color: #4CAF50;">Đáp án: Vị trí ${position}</strong>`;
+
+            // Giải thích
+            let explanation = `
+                <p><strong>Phân tích:</strong></p>
+                <ul>
+                    <li>Người ở vị trí <strong>${position}</strong> sẽ đọc các số: \\(${position}, ${position + numPeople}, ${position + 2*numPeople}, \\ldots\\)</li>
+                    <li>Công thức tổng quát: \\[\\text{target} = P + k \\times n\\]
+                        Với \\(P = ${position}\\), \\(k = ${rounds}\\), \\(n = ${numPeople}\\)</li>
+                    <li>Tính toán: \\[${target} \\div ${numPeople} = ${Math.floor(target / numPeople)} \\text{ (dư } ${target % numPeople})\\]</li>
+                    ${target % numPeople === 0
+                        ? `<li>Vì \\(${target} \\equiv 0 \\pmod{${numPeople}}\\), nên người ở vị trí ${numPeople} (vị trí cuối) sẽ đọc số ${target}</li>`
+                        : `<li>Vì \\(${target} \\equiv ${target % numPeople} \\pmod{${numPeople}}\\), vậy người ở vị trí ${position} sẽ đọc số ${target}</li>`
+                    }
+                    <li>Vòng tròn đã hoàn thành <strong>${rounds}</strong> vòng khi đến số ${target}</li>
+                </ul>
+            `;
+            document.getElementById('explanation-content').innerHTML = explanation;
+
+            // Trigger MathJax to render the new content
+            if (window.MathJax) {
+                MathJax.typesetPromise([document.getElementById('explanation-content')]).catch((err) => console.log(err));
+            }
+
+            // Vẽ vòng tròn
+            drawCircle(numPeople, position);
+
+            // Hiển thị các số đã đọc
+            document.getElementById('position-display').textContent = position;
+            const numbersList = document.getElementById('numbers-list');
+            numbersList.innerHTML = '';
+
+            const displayLimit = 20;
+            const numbersToDisplay = numbersRead.slice(0, displayLimit);
+
+            numbersToDisplay.forEach((num, index) => {
+                const item = document.createElement('div');
+                item.className = 'number-item';
+                if (num === target) {
+                    item.className += ' target';
+                }
+                item.textContent = num;
+                numbersList.appendChild(item);
+            });
+
+            if (numbersRead.length > displayLimit) {
+                const more = document.createElement('div');
+                more.className = 'number-item';
+                more.style.background = '#999';
+                more.textContent = `... (+${numbersRead.length - displayLimit})`;
+                numbersList.appendChild(more);
+            }
+
+            document.getElementById('count-display').textContent = numbersRead.length;
+        }
+
+        // Tính toán khi load trang
+        window.onload = calculate;
+    </script>
+</body>
+</html>
