@@ -1,0 +1,14 @@
+{
+  "name": "maths",
+  "version": "1.0.0",
+  "main": "solution.js",
+  "license": "MIT",
+  "scripts": {
+    "test": "node test.js",
+    "test:ui": "node playwright.test.js",
+    "test:visual": "node playwright.visual.js"
+  },
+  "devDependencies": {
+    "playwright": "^1.56.1"
+  }
+}

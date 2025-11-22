@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài Toán Rút Bi - Minh Họa Tương Tác</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .problem {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .input-section {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .input-group {
+            margin: 10px 0;
+        }
+        label {
+            display: inline-block;
+            width: 200px;
+            font-weight: bold;
+        }
+        input {
+            padding: 8px;
+            width: 100px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        .result-visualization-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .result {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .result h2 {
+            color: #4CAF50;
+            margin-top: 0;
+        }
+        .visualization {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        @media (max-width: 1400px) {
+            .result-visualization-container {
+                grid-template-columns: 1fr;
+            }
+        }
+        @media (max-width: 768px) {
+            body {
+                max-width: 100%;
+                padding: 10px;
+            }
+            .ball-row {
+                grid-template-columns: 60px repeat(auto-fit, 30px);
+            }
+            .ball {
+                width: 25px;
+                height: 25px;
+                font-size: 10px;
+            }
+        }
+        .ball-group {
+            margin: 15px 0;
+            padding: 10px;
+            background: #f9f9f9;
+            border-radius: 4px;
+        }
+        .ball-group-header {
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #333;
+        }
+        .balls {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .ball-row {
+            display: grid;
+            grid-template-columns: 80px repeat(auto-fit, 35px);
+            gap: 5px;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+        .ball-row-label {
+            font-weight: bold;
+            color: #555;
+            text-align: right;
+            padding-right: 10px;
+        }
+        .ball {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+        .ball.drawn {
+            background: #f44336;
+        }
+        .ball.available {
+            background: #2196F3;
+        }
+        .explanation {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 15px;
+            border-left: 4px solid #2196F3;
+        }
+        .step {
+            margin: 10px 0;
+            padding: 10px;
+            background: white;
+            border-radius: 4px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        .step.playing {
+            background: #fff9c4;
+            border-left: 4px solid #FFC107;
+            transform: scale(1.02);
+            box-shadow: 0 4px 12px rgba(255, 193, 7, 0.3);
+        }
+        .step-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .play-btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        .play-btn:hover {
+            background: #45a049;
+            transform: scale(1.1);
+        }
+        .play-btn:active {
+            transform: scale(0.95);
+        }
+        .step-animation {
+            margin-top: 10px;
+            padding: 10px;
+            background: #f0f0f0;
+            border-radius: 4px;
+            display: none;
+        }
+        .step-animation.active {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                max-height: 0;
+                padding: 0;
+            }
+            to {
+                opacity: 1;
+                max-height: 500px;
+                padding: 10px;
+            }
+        }
+        .ball.highlight {
+            animation: pulse 0.5s ease;
+        }
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.3);
+                box-shadow: 0 0 10px rgba(76, 175, 80, 0.8);
+            }
+        }
+        .formula {
+            font-family: 'Courier New', monospace;
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .problem-illustration {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .ball.target {
+            background: #333;
+            position: relative;
+        }
+        .ball.target::after {
+            content: '?';
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #FF9800;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 10px;
+            white-space: nowrap;
+        }
+        .ball.normal {
+            background: #9E9E9E;
+        }
+        .method-selector {
+            background: #f0f0f0;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .method-btn {
+            padding: 10px 20px;
+            border: 2px solid #4CAF50;
+            background: white;
+            color: #4CAF50;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        .method-btn:hover {
+            background: #e8f5e9;
+        }
+        .method-btn.active {
+            background: #4CAF50;
+            color: white;
+        }
+        .method-description {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 4px;
+            border-left: 4px solid #ffc107;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Bài Toán Rút Bi - Minh Họa Tương Tác</h1>
+
+    <div class="problem">
+        <h2>Đề Bài</h2>
+        <p id="problem-text">Trong một hộp có 1 viên bi số 1; 2 viên bi số 2; 3 viên bi số 3; ...; <strong>15</strong> viên bi số <strong>15</strong>.</p>
+        <p id="question-text">Chúng ta rút bi từ hộp mà không nhìn. Hỏi phải rút ít nhất bao nhiêu viên bi để chắc chắn trong số các viên bi đã rút có <strong>10</strong> viên bi cùng số?</p>
+    </div>
+
+    <div class="input-section">
+        <h2>Tham Số Đầu Vào</h2>
+        <div class="input-group">
+            <label>Số tối đa (n):</label>
+            <input type="number" id="n" value="15" min="1" max="30" oninput="updateProblem()">
+        </div>
+        <div class="input-group">
+            <label>Số bi cùng loại cần có (k):</label>
+            <input type="number" id="k" value="10" min="1" oninput="updateProblem()">
+        </div>
+        <button onclick="calculate()">Tính Toán & Minh Họa</button>
+    </div>
+
+    <div id="problem-illustration" class="problem-illustration">
+        <h2>Minh Họa Đề Bài</h2>
+        <p style="color: #666; margin-bottom: 15px;">
+            <strong>Bi xám:</strong> Tất cả bi trong hộp |
+            <strong>Bi đen (?):</strong> Cần tìm k viên bi cùng số
+        </p>
+        <div id="initial-balls"></div>
+    </div>
+
+    <div id="result-container" style="display:none;">
+        <div style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <h2 style="color: #4CAF50; margin-top: 0;">Kết Quả</h2>
+            <p id="answer"></p>
+
+            <div class="method-selector">
+                <button class="method-btn active" onclick="selectMethod(1)">Phương Án 1: Nguyên Lý Dirichlet</button>
+                <button class="method-btn" onclick="selectMethod(2)">Phương Án 2: Phân Tích Từng Nhóm</button>
+                <button class="method-btn" onclick="selectMethod(3)">Phương Án 3: Công Thức Tổng Quát</button>
+                <button class="method-btn" onclick="selectMethod(4)">Phương Án 4: Đếm Phần Bù</button>
+            </div>
+        </div>
+
+        <div class="result-visualization-container">
+            <div class="result">
+                <div class="explanation">
+                    <div id="method-description" class="method-description"></div>
+                    <h3>Giải Thích Chi Tiết:</h3>
+                    <div id="steps"></div>
+                </div>
+            </div>
+
+            <div class="visualization">
+                <h2>Minh Họa</h2>
+                <div id="balls-container"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentMethod = 1;
+
+        function selectMethod(method) {
+            currentMethod = method;
+
+            // Update button states
+            document.querySelectorAll('.method-btn').forEach((btn, index) => {
+                if (index + 1 === method) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+
+            // Recalculate with new method
+            const n = parseInt(document.getElementById('n').value);
+            const k = parseInt(document.getElementById('k').value);
+            generateExplanation(n, k, method);
+        }
+
+        function updateProblem() {
+            const n = parseInt(document.getElementById('n').value) || 1;
+            const k = parseInt(document.getElementById('k').value) || 1;
+
+            // Update problem statement
+            document.getElementById('problem-text').innerHTML =
+                `Trong một hộp có 1 viên bi số 1; 2 viên bi số 2; 3 viên bi số 3; ...; <strong>${n}</strong> viên bi số <strong>${n}</strong>.`;
+
+            document.getElementById('question-text').innerHTML =
+                `Chúng ta rút bi từ hộp mà không nhìn. Hỏi phải rút ít nhất bao nhiêu viên bi để chắc chắn trong số các viên bi đã rút có <strong>${k}</strong> viên bi cùng số?`;
+
+            // Update initial illustration
+            illustrateProblem(n, k);
+        }
+
+        function illustrateProblem(n, k) {
+            const container = document.getElementById('initial-balls');
+            container.innerHTML = '';
+
+            const ballsDiv = document.createElement('div');
+            ballsDiv.className = 'balls';
+
+            for (let num = 1; num <= n; num++) {
+                const row = document.createElement('div');
+                row.className = 'ball-row';
+
+                const label = document.createElement('span');
+                label.className = 'ball-row-label';
+                label.textContent = `Số ${num}:`;
+                row.appendChild(label);
+
+                for (let i = 0; i < num; i++) {
+                    const ball = document.createElement('div');
+                    ball.className = 'ball';
+
+                    // First k balls of numbers >= k are marked as target (black with ?)
+                    if (num >= k && i < k) {
+                        ball.className = 'ball target';
+                        if (i === 0) {
+                            // Add label only on first ball
+                            ball.style.position = 'relative';
+                        }
+                    } else {
+                        ball.className = 'ball normal';
+                    }
+
+                    ball.textContent = num;
+                    row.appendChild(ball);
+                }
+                ballsDiv.appendChild(row);
+            }
+
+            container.appendChild(ballsDiv);
+        }
+
+        function solve(n, k) {
+            let worstCase = 0;
+
+            // Numbers 1 to (k-1) can never have k balls
+            for (let i = 1; i < k; i++) {
+                worstCase += i;
+            }
+
+            // Numbers k to n can have k or more balls
+            let numbersWithEnoughBalls = n - k + 1;
+            worstCase += numbersWithEnoughBalls * (k - 1);
+
+            // One more ball
+            worstCase += 1;
+
+            return worstCase;
+        }
+
+        let stepCounter = 0;
+
+        function createStep(title, content, animationContent = '', ballsToHighlight = {}) {
+            stepCounter++;
+            const stepId = `step-${stepCounter}`;
+            let html = `<div class="step" id="${stepId}" data-balls='${JSON.stringify(ballsToHighlight)}'>`;
+            html += `<div class="step-header">`;
+            html += `<strong>${title}</strong>`;
+            html += `<button class="play-btn" onclick="playStep('${stepId}')" title="Xem animation">▶</button>`;
+            html += `</div>`;
+            html += `<div class="step-content">${content}</div>`;
+            if (animationContent) {
+                html += `<div class="step-animation" id="${stepId}-animation">${animationContent}</div>`;
+            }
+            html += `</div>`;
+            return html;
+        }
+
+        function playStep(stepId) {
+            // Remove playing class from all steps
+            document.querySelectorAll('.step').forEach(step => {
+                step.classList.remove('playing');
+            });
+
+            // Add playing class to current step
+            const step = document.getElementById(stepId);
+            if (step) {
+                step.classList.add('playing');
+
+                // Toggle animation content
+                const animation = document.getElementById(stepId + '-animation');
+                if (animation) {
+                    animation.classList.toggle('active');
+                }
+
+                // Scroll to step
+                step.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+                // Highlight balls in visualization based on step
+                highlightBallsForStep(stepId);
+
+                // Remove playing class after 3 seconds
+                setTimeout(() => {
+                    step.classList.remove('playing');
+                }, 3000);
+            }
+        }
+
+        function highlightBallsForStep(stepId) {
+            // Remove all highlights
+            document.querySelectorAll('.ball.highlight').forEach(ball => {
+                ball.classList.remove('highlight');
+            });
+
+            // Get ball configuration from step data
+            const step = document.getElementById(stepId);
+            if (!step) return;
+
+            const ballsConfig = JSON.parse(step.getAttribute('data-balls') || '{}');
+
+            // If no specific config, don't highlight anything
+            if (Object.keys(ballsConfig).length === 0) return;
+
+            // Highlight specific balls based on config
+            const allBallRows = document.querySelectorAll('#balls-container .ball-row');
+            let delay = 0;
+
+            allBallRows.forEach(row => {
+                const label = row.querySelector('.ball-row-label');
+                if (!label) return;
+
+                const numMatch = label.textContent.match(/Số (\d+):/);
+                if (!numMatch) return;
+
+                const num = parseInt(numMatch[1]);
+                const balls = row.querySelectorAll('.ball');
+
+                // Check if this number should be highlighted
+                if (ballsConfig.numbers && ballsConfig.numbers.includes(num)) {
+                    // Highlight specific count or all
+                    const count = ballsConfig.count || balls.length;
+                    balls.forEach((ball, index) => {
+                        if (index < count) {
+                            setTimeout(() => {
+                                ball.classList.add('highlight');
+                                setTimeout(() => ball.classList.remove('highlight'), 500);
+                            }, delay);
+                            delay += 30;
+                        }
+                    });
+                } else if (ballsConfig.range) {
+                    // Highlight range of numbers
+                    const [start, end] = ballsConfig.range;
+                    if (num >= start && num <= end) {
+                        if (ballsConfig.count === -1) {
+                            // Special case: highlight the REMAINING balls (balls that can be left)
+                            // For number with 'num' balls, if we draw k-1, the remaining are from index k-1 to end
+                            const k = parseInt(document.getElementById('k').value);
+                            balls.forEach((ball, index) => {
+                                if (index >= k - 1) { // Highlight balls from position k-1 onwards
+                                    setTimeout(() => {
+                                        ball.classList.add('highlight');
+                                        setTimeout(() => ball.classList.remove('highlight'), 500);
+                                    }, delay);
+                                    delay += 30;
+                                }
+                            });
+                        } else {
+                            // Normal case: highlight first 'count' balls
+                            const count = ballsConfig.count || balls.length;
+                            balls.forEach((ball, index) => {
+                                if (index < count) {
+                                    setTimeout(() => {
+                                        ball.classList.add('highlight');
+                                        setTimeout(() => ball.classList.remove('highlight'), 500);
+                                    }, delay);
+                                    delay += 30;
+                                }
+                            });
+                        }
+                    }
+                }
+            });
+        }
+
+        function generateExplanation(n, k, method) {
+            stepCounter = 0; // Reset counter
+            const result = solve(n, k);
+            let steps = '';
+            let description = '';
+
+            // Calculate sum of 1 to k-1
+            let sumSmallNumbers = 0;
+            for (let i = 1; i < k; i++) {
+                sumSmallNumbers += i;
+            }
+            const numbersWithEnough = n - k + 1;
+            const ballsFromLargeNumbers = numbersWithEnough * (k - 1);
+
+            if (method === 1) {
+                // Phương án 1: Nguyên lý Dirichlet (Pigeonhole Principle)
+                description = `<strong>Nguyên lý Dirichlet:</strong> Nếu phân phối m đối tượng vào n hộp và m > n×k, thì tồn tại ít nhất một hộp chứa hơn k đối tượng. Ở đây, ta coi mỗi số như một "hộp" và tìm số bi tối thiểu để đảm bảo một hộp có k bi.`;
+
+                let step1Content = `Các số từ 1 đến ${k-1} không bao giờ có ${k} viên bi.<br>`;
+                step1Content += `Trong trường hợp xấu nhất, ta rút hết tất cả: ${sumSmallNumbers} viên bi`;
+                let step1Anim = `💡 <strong>Animation:</strong> Tưởng tượng rút lần lượt các bi từ số 1, 2, 3... đến ${k-1}. Tổng cộng ${sumSmallNumbers} viên bi được rút ra.`;
+                let step1Balls = { range: [1, k-1] }; // Highlight all balls from 1 to k-1
+                steps += createStep('Bước 1: Loại bỏ các số không đủ điều kiện', step1Content, step1Anim, step1Balls);
+
+                let step2Content = `Còn lại ${numbersWithEnough} "hộp" (số ${k} đến ${n}).<br>`;
+                step2Content += `Để đảm bảo một hộp có ${k} bi, trường hợp xấu nhất là mỗi hộp có ${k-1} bi:<br>`;
+                step2Content += `${numbersWithEnough} hộp × ${k-1} bi = ${ballsFromLargeNumbers} viên bi`;
+                let step2Anim = `🎯 <strong>Animation:</strong> Từ mỗi số ${k}, ${k+1}, ..., ${n}, rút ${k-1} viên bi. Mỗi hộp còn thiếu 1 viên để đủ ${k} viên.`;
+                let step2Balls = { range: [k, n], count: k-1 }; // Highlight first k-1 balls from each number k to n
+                steps += createStep('Bước 2: Áp dụng nguyên lý Dirichlet', step2Content, step2Anim, step2Balls);
+
+                let step3Content = `Viên bi thứ ${sumSmallNumbers + ballsFromLargeNumbers + 1} chắc chắn rơi vào một hộp đã có ${k-1} bi,<br>`;
+                step3Content += `tạo thành ${k} viên bi cùng số! 🎯<br><br>`;
+                step3Content += `<strong>Công thức:</strong> ${sumSmallNumbers} + ${ballsFromLargeNumbers} + 1 = <strong>${result} viên bi</strong>`;
+                let step3Anim = `✨ <strong>Điểm then chốt:</strong> Viên bi tiếp theo BẮT BUỘC phải rơi vào một trong ${numbersWithEnough} hộp, làm hộp đó có đủ ${k} viên!`;
+                let step3Balls = { range: [k, n], count: k }; // Highlight k balls from each number k to n
+                steps += createStep('Bước 3: Bi quyết định', step3Content, step3Anim, step3Balls);
+
+            } else if (method === 2) {
+                // Phương án 2: Phân tích từng nhóm
+                description = `<strong>Phương pháp phân nhóm:</strong> Chia các số thành 2 nhóm: nhóm "không đủ" (1 đến ${k-1}) và nhóm "đủ" (${k} đến ${n}). Phân tích riêng từng nhóm trong trường hợp xấu nhất.`;
+
+                let terms = [];
+                for (let i = 1; i < k; i++) {
+                    terms.push(i);
+                }
+                let group1Content = `Tổng số bi trong nhóm này:<br>`;
+                group1Content += `${terms.join(' + ')} = ${sumSmallNumbers} viên bi<br>`;
+                group1Content += `<strong>Kết luận nhóm 1:</strong> Rút tối đa ${sumSmallNumbers} viên mà không có ${k} viên cùng số.`;
+                let group1Anim = `📦 <strong>Nhóm 1:</strong> Gồm ${k-1} số, mỗi số có ít hơn ${k} viên. Rút hết tất cả cũng không đủ điều kiện!`;
+                let group1Balls = { range: [1, k-1] };
+                steps += createStep(`Nhóm 1: Các số không đủ điều kiện (1 đến ${k-1})`, group1Content, group1Anim, group1Balls);
+
+                let group2Content = `Có ${numbersWithEnough} số trong nhóm này.<br>`;
+                group2Content += `Mỗi số có từ ${k} viên trở lên.<br>`;
+                group2Content += `Trường hợp xấu nhất: rút ${k-1} viên từ mỗi số = ${ballsFromLargeNumbers} viên bi<br>`;
+                group2Content += `<strong>Kết luận nhóm 2:</strong> Rút tối đa ${ballsFromLargeNumbers} viên mà không có ${k} viên cùng số.`;
+                let group2Anim = `📦 <strong>Nhóm 2:</strong> Gồm ${numbersWithEnough} số đủ điều kiện. Rút "gần đủ" (${k-1} viên) từ mỗi số.`;
+                let group2Balls = { range: [k, n], count: k-1 };
+                steps += createStep(`Nhóm 2: Các số đủ điều kiện (${k} đến ${n})`, group2Content, group2Anim, group2Balls);
+
+                let summaryContent = `Tổng bi rút được mà vẫn chưa có ${k} viên cùng số:<br>`;
+                summaryContent += `Nhóm 1 + Nhóm 2 = ${sumSmallNumbers} + ${ballsFromLargeNumbers} = ${sumSmallNumbers + ballsFromLargeNumbers} viên<br><br>`;
+                summaryContent += `Rút thêm 1 viên nữa (viên thứ ${result}) → Chắc chắn có ${k} viên cùng số! 🎯<br><br>`;
+                summaryContent += `<strong>Đáp án:</strong> ${sumSmallNumbers} + ${ballsFromLargeNumbers} + 1 = <strong>${result} viên bi</strong>`;
+                let summaryAnim = `🎉 <strong>Tổng kết:</strong> ${sumSmallNumbers} + ${ballsFromLargeNumbers} + 1 = ${result} viên bi`;
+                let summaryBalls = { range: [1, n] }; // Show all balls
+                steps += createStep('Tổng hợp hai nhóm', summaryContent, summaryAnim, summaryBalls);
+
+            } else if (method === 3) {
+                // Phương án 3: Công thức tổng quát
+                description = `<strong>Phương pháp công thức:</strong> Sử dụng công thức tổng quát cho bài toán rút bi. Kết quả = Σ(i=1 to k-1) i + (n-k+1)×(k-1) + 1`;
+
+                let formulaContent = `Với n số và cần k bi cùng số, công thức là:<br>`;
+                formulaContent += `<div class="formula">Kết quả = Σ(từ i=1 đến k-1) + (n-k+1)×(k-1) + 1</div>`;
+                formulaContent += `Trong đó:<br>`;
+                formulaContent += `• Σ(từ i=1 đến k-1) = tổng bi từ các số nhỏ hơn k<br>`;
+                formulaContent += `• (n-k+1) = số lượng các số ≥ k<br>`;
+                formulaContent += `• (k-1) = số bi rút từ mỗi số ≥ k<br>`;
+                formulaContent += `• +1 = viên bi quyết định`;
+                let formulaAnim = `📐 <strong>Công thức tổng quát:</strong> Áp dụng cho bất kỳ giá trị n và k nào!`;
+                steps += createStep('Công thức tổng quát', formulaContent, formulaAnim, {});
+
+                let part1Content = `Sử dụng công thức tổng dãy số: Σ = n×(n+1)/2<br>`;
+                part1Content += `Σ(từ 1 đến ${k-1}) = ${k-1}×${k}/2 = ${sumSmallNumbers} viên bi`;
+                let part1Anim = `🔢 <strong>Tính tổng:</strong> 1 + 2 + 3 + ... + ${k-1} = ${sumSmallNumbers}`;
+                let part1Balls = { range: [1, k-1] };
+                steps += createStep(`Tính phần 1: Σ(từ i=1 đến ${k-1})`, part1Content, part1Anim, part1Balls);
+
+                let part2Content = `Số lượng số ≥ k: n - k + 1 = ${n} - ${k} + 1 = ${numbersWithEnough}<br>`;
+                part2Content += `Số bi rút từ mỗi số: k - 1 = ${k} - 1 = ${k-1}<br>`;
+                part2Content += `Tích: ${numbersWithEnough} × ${k-1} = ${ballsFromLargeNumbers} viên bi`;
+                let part2Anim = `✖️ <strong>Tính tích:</strong> ${numbersWithEnough} số × ${k-1} viên/số = ${ballsFromLargeNumbers}`;
+                let part2Balls = { range: [k, n], count: k-1 };
+                steps += createStep('Tính phần 2: (n-k+1)×(k-1)', part2Content, part2Anim, part2Balls);
+
+                let finalContent = `Kết quả = Phần 1 + Phần 2 + 1<br>`;
+                finalContent += `Kết quả = ${sumSmallNumbers} + ${ballsFromLargeNumbers} + 1<br>`;
+                finalContent += `<strong>Kết quả = ${result} viên bi</strong> 🎯`;
+                let finalAnim = `🎊 <strong>Kết quả:</strong> ${sumSmallNumbers} + ${ballsFromLargeNumbers} + 1 = ${result} viên bi!`;
+                let finalBalls = { range: [1, n] };
+                steps += createStep('Tính kết quả cuối cùng', finalContent, finalAnim, finalBalls);
+
+            } else if (method === 4) {
+                // Phương án 4: Đếm phần bù (Complementary Counting)
+                description = `<strong>Phương pháp đếm phần bù:</strong> Thay vì đếm trực tiếp, ta tính tổng tất cả các bi trong hộp, sau đó trừ đi số bi có thể bỏ lại mà vẫn không thoả mãn điều kiện.`;
+
+                // Tính tổng tất cả bi
+                let totalBalls = 0;
+                for (let i = 1; i <= n; i++) {
+                    totalBalls += i;
+                }
+
+                // Tính số bi có thể bỏ lại
+                let ballsCanLeave = 0;
+                // Từ mỗi số >= k, có thể bỏ lại (num - k + 1) viên bi
+                for (let num = k; num <= n; num++) {
+                    ballsCanLeave += (num - k + 1);
+                }
+
+                let totalContent = `Tổng bi = 1 + 2 + 3 + ... + ${n}<br>`;
+                totalContent += `Sử dụng công thức: Tổng = n×(n+1)/2<br>`;
+                totalContent += `Tổng = ${n}×${n+1}/2 = ${totalBalls} viên bi<br><br>`;
+                totalContent += `Đây là số bi tối đa có thể rút (rút hết hộp).`;
+                let totalAnim = `🎲 <strong>Tổng số bi:</strong> Nếu rút hết hộp sẽ có ${totalBalls} viên bi.`;
+                let totalBalls4 = { range: [1, n] }; // Show all balls
+                steps += createStep('Bước 1: Tính tổng tất cả bi trong hộp', totalContent, totalAnim, totalBalls4);
+
+                let leaveContent = `Để KHÔNG có ${k} viên bi cùng số, mỗi số chỉ được rút tối đa ${k-1} viên.<br><br>`;
+                leaveContent += `• Các số 1 đến ${k-1}: Phải rút hết (không đủ ${k} viên)<br>`;
+                leaveContent += `  → Không thể bỏ lại: 0 viên<br><br>`;
+                leaveContent += `• Các số ${k} đến ${n}: Mỗi số có thể bỏ lại một số viên:<br>`;
+
+                for (let num = k; num <= Math.min(k + 2, n); num++) {
+                    leaveContent += `  - Số ${num}: có ${num} viên, rút tối đa ${k-1} viên → bỏ lại ${num - k + 1} viên<br>`;
+                }
+                if (n > k + 2) leaveContent += `  - ...<br>`;
+                if (n > k + 1) leaveContent += `  - Số ${n}: có ${n} viên, rút tối đa ${k-1} viên → bỏ lại ${n - k + 1} viên<br>`;
+
+                leaveContent += `<br>Tổng bi có thể bỏ lại = `;
+                let leaveTerms = [];
+                for (let num = k; num <= n; num++) {
+                    leaveTerms.push(`${num - k + 1}`);
+                }
+                leaveContent += leaveTerms.join(' + ') + ` = ${ballsCanLeave} viên bi`;
+                let leaveAnim = `🔄 <strong>Đếm ngược:</strong> Có ${ballsCanLeave} viên bi có thể BỎ LẠI trong hộp.`;
+                // Highlight balls that will be left (the last balls of each number >= k)
+                let leaveBalls = { range: [k, n], count: -1 }; // -1 means show the remaining balls
+                steps += createStep('Bước 2: Tính số bi có thể bỏ lại mà vẫn không thoả mãn', leaveContent, leaveAnim, leaveBalls);
+
+                let compContent = `Số bi tối đa có thể rút mà KHÔNG thoả mãn:<br>`;
+                compContent += `= Tổng tất cả bi - Số bi có thể bỏ lại<br>`;
+                compContent += `= ${totalBalls} - ${ballsCanLeave} = ${totalBalls - ballsCanLeave} viên bi<br><br>`;
+                compContent += `Đây là số bi tối đa rút mà chưa có ${k} viên cùng số.<br>`;
+                compContent += `Rút thêm 1 viên nữa → Chắc chắn có ${k} viên cùng số! 🎯<br><br>`;
+                compContent += `<strong>Kết quả: ${totalBalls - ballsCanLeave} + 1 = ${result} viên bi</strong>`;
+                let compAnim = `➖ <strong>Phần bù:</strong> ${totalBalls} - ${ballsCanLeave} + 1 = ${result} viên bi!`;
+                let compBalls = { range: [k, n], count: k }; // Highlight the k balls needed
+                steps += createStep('Bước 3: Tính số bi phải rút (phần bù)', compContent, compAnim, compBalls);
+            }
+
+            document.getElementById('method-description').innerHTML = description;
+            document.getElementById('steps').innerHTML = steps;
+        }
+
+        function calculate() {
+            const n = parseInt(document.getElementById('n').value);
+            const k = parseInt(document.getElementById('k').value);
+
+            if (k > n) {
+                alert('k không thể lớn hơn n!');
+                return;
+            }
+
+            const result = solve(n, k);
+
+            // Show result
+            document.getElementById('result-container').style.display = 'block';
+            document.getElementById('answer').innerHTML = `<strong>Đáp án: ${result} viên bi</strong>`;
+
+            // Generate explanation based on current method
+            generateExplanation(n, k, currentMethod);
+
+            // Visualization
+            visualize(n, k);
+        }
+
+        function visualize(n, k) {
+            const container = document.getElementById('balls-container');
+            container.innerHTML = '';
+
+            // Numbers that can't have k balls
+            if (k > 1) {
+                const group1 = document.createElement('div');
+                group1.className = 'ball-group';
+                group1.innerHTML = `<div class="ball-group-header">Các số 1-${k-1}: Rút HẾT (không đủ ${k} viên)</div>`;
+                const balls1 = document.createElement('div');
+                balls1.className = 'balls';
+
+                for (let num = 1; num < k; num++) {
+                    const row = document.createElement('div');
+                    row.className = 'ball-row';
+
+                    const label = document.createElement('span');
+                    label.className = 'ball-row-label';
+                    label.textContent = `Số ${num}:`;
+                    row.appendChild(label);
+
+                    for (let i = 0; i < num; i++) {
+                        const ball = document.createElement('div');
+                        ball.className = 'ball drawn';
+                        ball.textContent = num;
+                        row.appendChild(ball);
+                    }
+                    balls1.appendChild(row);
+                }
+                group1.appendChild(balls1);
+                container.appendChild(group1);
+            }
+
+            // Numbers that can have k balls
+            const group2 = document.createElement('div');
+            group2.className = 'ball-group';
+            group2.innerHTML = `<div class="ball-group-header">Các số ${k}-${n}: Rút ${k-1} viên từ mỗi số (trường hợp xấu nhất)</div>`;
+            const balls2 = document.createElement('div');
+            balls2.className = 'balls';
+
+            for (let num = k; num <= n; num++) {
+                const row = document.createElement('div');
+                row.className = 'ball-row';
+
+                const label = document.createElement('span');
+                label.className = 'ball-row-label';
+                label.textContent = `Số ${num}:`;
+                row.appendChild(label);
+
+                for (let i = 0; i < num; i++) {
+                    const ball = document.createElement('div');
+                    if (i < k - 1) {
+                        ball.className = 'ball drawn';
+                    } else {
+                        ball.className = 'ball available';
+                    }
+                    ball.textContent = num;
+                    row.appendChild(ball);
+                }
+                balls2.appendChild(row);
+            }
+            group2.appendChild(balls2);
+            container.appendChild(group2);
+
+            const note = document.createElement('div');
+            note.className = 'explanation';
+            note.innerHTML = `
+                <strong>Chú thích:</strong><br>
+                <span class="ball drawn" style="display:inline-flex; width:20px; height:20px; margin:5px;">Đỏ</span> = Đã rút trong trường hợp xấu nhất<br>
+                <span class="ball available" style="display:inline-flex; width:20px; height:20px; margin:5px;">Xanh</span> = Còn lại (viên bi tiếp theo đảm bảo có ${k} viên cùng số)
+            `;
+            container.appendChild(note);
+        }
+
+        // Initialize on load
+        updateProblem();
+        calculate();
+    </script>
+</body>
+</html>
