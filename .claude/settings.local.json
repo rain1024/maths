@@ -6,7 +6,8 @@
       "Bash(yarn test)",
       "Bash(yarn add:*)",
       "Bash(yarn:*)",
-      "Bash(cat:*)"
+      "Bash(cat:*)",
+      "Bash(pdflatex:*)"
     ],
     "deny": [],
     "ask": []
