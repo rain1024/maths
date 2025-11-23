@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="700" height="700" viewBox="0 0 700 700" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      .grid-border { stroke: #000; stroke-width: 2; fill: none; }
+      .point { fill: red; }
+      .point-label { font-size: 14px; font-weight: bold; fill: red; font-family: Arial; }
+      .helper-line { stroke: blue; stroke-width: 2; stroke-dasharray: 5,5; }
+      .trapezoid { fill: #FFD700; fill-opacity: 0.5; stroke: #FFA500; stroke-width: 3; }
+      .triangle { fill: #87CEEB; fill-opacity: 0.5; stroke: #4169E1; stroke-width: 3; }
+    </style>
+  </defs>
+
+  <!-- Grid -->
+  <rect x="100" y="400" width="100" height="100" class="grid-border"/>
+  <rect x="200" y="400" width="100" height="100" class="grid-border"/>
+  <rect x="300" y="400" width="100" height="100" class="grid-border"/>
+  <rect x="100" y="300" width="100" height="100" class="grid-border"/>
+  <rect x="200" y="300" width="100" height="100" class="grid-border"/>
+  <rect x="300" y="300" width="100" height="100" class="grid-border"/>
+  <rect x="100" y="200" width="100" height="100" class="grid-border"/>
+  <rect x="200" y="200" width="100" height="100" class="grid-border"/>
+  <rect x="300" y="200" width="100" height="100" class="grid-border"/>
+  <rect x="300" y="100" width="100" height="100" class="grid-border"/>
+  <rect x="400" y="100" width="100" height="100" class="grid-border"/>
+  <rect x="400" y="200" width="100" height="100" class="grid-border"/>
+
+  <!-- Kẻ đường phụ: Đường thẳng đứng từ P17 xuống điểm Q (15, 0) -->
+  <line x1="400" y1="200" x2="400" y2="500" class="helper-line"/>
+  <circle cx="400" cy="500" r="4" fill="blue"/>
+  <text x="410" y="520" style="font-size: 12px; fill: blue; font-weight: bold;">Q</text>
+
+  <!-- HÌNH THANG: P1-Q-P17-P20 -->
+  <polygon points="100,500 400,500 400,200 400,100" class="trapezoid"/>
+
+  <!-- TAM GIÁC: Q-P18-P17 -->
+  <polygon points="400,500 500,200 400,200" class="triangle"/>
+
+  <!-- TAM GIÁC NHỎ: P17-P18-P20 -->
+  <polygon points="400,200 500,200 400,100" fill="pink" fill-opacity="0.5" stroke="red" stroke-width="3"/>
+
+  <!-- Đánh dấu các điểm chính -->
+  <circle cx="100" cy="500" r="5" class="point"/>
+  <text x="60" y="520" class="point-label">P1 (0,0)</text>
+
+  <circle cx="400" cy="200" r="5" class="point"/>
+  <text x="410" y="195" class="point-label">P17 (15,15)</text>
+
+  <circle cx="500" cy="200" r="5" class="point"/>
+  <text x="510" y="195" class="point-label">P18 (20,15)</text>
+
+  <circle cx="400" cy="100" r="5" class="point"/>
+  <text x="410" y="90" class="point-label">P20 (15,20)</text>
+
+  <!-- Title -->
+  <text x="100" y="50" style="font-size: 22px; font-weight: bold; fill: #333;">CÁCH GIẢI CHO LỚP 4</text>
+
+  <!-- Giải thích -->
+  <g transform="translate(50, 570)">
+    <text x="0" y="0" style="font-size: 16px; fill: #333; font-weight: bold;">Bước 1: Kẻ đường phụ từ P17 thẳng xuống P1 (tạo điểm Q)</text>
+
+    <text x="0" y="25" style="font-size: 14px; fill: #000; font-weight: bold;">Bước 2: Chia thành 3 hình:</text>
+
+    <rect x="0" y="30" width="15" height="15" fill="#FFD700" fill-opacity="0.5" stroke="#FFA500" stroke-width="2"/>
+    <text x="20" y="42" style="font-size: 13px; fill: #000;">
+      Hình thang P1-Q-P17-P20: Đáy lớn = 15cm, đáy nhỏ = 5cm, chiều cao = 15cm
+    </text>
+    <text x="20" y="56" style="font-size: 13px; fill: #666;">
+      → Diện tích = ½ × (15 + 5) × 15 = 150 cm²
+    </text>
+
+    <rect x="0" y="65" width="15" height="15" fill="#87CEEB" fill-opacity="0.5" stroke="#4169E1" stroke-width="2"/>
+    <text x="20" y="77" style="font-size: 13px; fill: #000;">
+      Tam giác vuông Q-P17-P18: Cạnh đứng = 15cm, cạnh ngang = 5cm
+    </text>
+    <text x="20" y="91" style="font-size: 13px; fill: #666;">
+      → Diện tích = ½ × 15 × 5 = 37.5 cm²
+    </text>
+
+    <rect x="0" y="100" width="15" height="15" fill="pink" fill-opacity="0.5" stroke="red" stroke-width="2"/>
+    <text x="20" y="112" style="font-size: 13px; fill: #000;">
+      Tam giác vuông P17-P20-P18: KHÔNG THUỘC phần tô đậm - BỎ QUA!
+    </text>
+  </g>
+
+</svg>

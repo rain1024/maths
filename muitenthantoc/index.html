@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài Toán Diện Tích - Minh Họa Tương Tác</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #1a1a1a;
+            color: #e0e0e0;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Header */
+        .header {
+            background: #262626;
+            border-bottom: 1px solid #3d3d3d;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .header h1 {
+            color: #ffa116;
+            font-size: 1.5em;
+            font-weight: 600;
+        }
+
+        .header-btn {
+            background: #ffa116;
+            color: #1a1a1a;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .header-btn:hover {
+            background: #ff8800;
+            transform: translateY(-1px);
+        }
+
+        /* Main Container */
+        .main-container {
+            display: flex;
+            height: calc(100vh - 60px);
+        }
+
+        /* Left Panel */
+        .left-panel {
+            width: 45%;
+            background: #262626;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid #3d3d3d;
+        }
+
+        /* Step Tabs */
+        .step-tabs {
+            display: flex;
+            background: #1a1a1a;
+            border-bottom: 1px solid #3d3d3d;
+        }
+
+        .step-tab {
+            flex: 1;
+            padding: 14px 16px;
+            background: transparent;
+            border: none;
+            color: #a0a0a0;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .step-tab:hover {
+            background: #2d2d2d;
+            color: #e0e0e0;
+        }
+
+        .step-tab.active {
+            color: #ffa116;
+            border-bottom-color: #ffa116;
+            background: #262626;
+        }
+
+        /* Step Content */
+        .step-content-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px;
+        }
+
+        .step-content {
+            display: none;
+        }
+
+        .step-content.active {
+            display: block;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Section */
+        .section {
+            background: #1a1a1a;
+            border: 1px solid #3d3d3d;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .section h3 {
+            color: #ffa116;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+
+        .section p {
+            line-height: 1.8;
+            color: #e0e0e0;
+            margin-bottom: 10px;
+        }
+
+        .section ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .section ul li {
+            padding: 6px 0 6px 20px;
+            position: relative;
+            color: #c0c0c0;
+            line-height: 1.6;
+        }
+
+        .section ul li:before {
+            content: "▸";
+            position: absolute;
+            left: 0;
+            color: #ffa116;
+        }
+
+        .highlight-box {
+            background: #2d2d00;
+            border-left: 4px solid #ffa116;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 15px 0;
+        }
+
+        /* Right Panel */
+        .right-panel {
+            width: 55%;
+            background: #1a1a1a;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .solution-header {
+            background: #262626;
+            padding: 16px 24px;
+            border-bottom: 1px solid #3d3d3d;
+        }
+
+        .solution-header h2 {
+            color: #ffa116;
+            font-size: 1.2em;
+        }
+
+        .solution-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px;
+        }
+
+        /* Answer Box */
+        .answer-box {
+            background: linear-gradient(135deg, #ffa116 0%, #ff8800 100%);
+            color: #1a1a1a;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        /* Explanation */
+        .explanation {
+            background: #262626;
+            border: 1px solid #3d3d3d;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .explanation h3 {
+            color: #ffa116;
+            margin-bottom: 15px;
+        }
+
+        /* Visualization */
+        .visualization-container {
+            background: #262626;
+            border: 1px solid #3d3d3d;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .visualization-container h3 {
+            color: #ffa116;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .image-container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .image-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            border: 2px solid #3d3d3d;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #1a1a1a;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #3d3d3d;
+            border-radius: 5px;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .main-container {
+                flex-direction: column;
+            }
+            .left-panel, .right-panel {
+                width: 100%;
+                height: 50vh;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <h1>📐 Bài Toán Diện Tích</h1>
+        <button class="header-btn" onclick="showSolution()">⚡ Xem Lời Giải</button>
+    </div>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Left Panel: Problem & Steps -->
+        <div class="left-panel">
+            <div class="step-tabs">
+                <button class="step-tab active" onclick="showStep(0)">Đề bài</button>
+                <button class="step-tab" onclick="showStep(1)">1. Tìm hiểu</button>
+                <button class="step-tab" onclick="showStep(2)">2. Phân tích</button>
+                <button class="step-tab" onclick="showStep(3)">3. Giải pháp</button>
+            </div>
+
+            <div class="step-content-container">
+                <!-- Step 0: Đề bài -->
+                <div id="step0" class="step-content active">
+                    <div class="section">
+                        <h3>📋 Đề Bài</h3>
+                        <p>
+                            <strong>Thử thách:</strong> Cho hình dưới đây có diện tích 1 ô vuông là <strong style="color: #ffa116;">25cm²</strong>.
+                        </p>
+                        <p style="margin-top: 15px;">
+                            <strong>Hỏi:</strong> Tính diện tích phần tô đậm.
+                        </p>
+                    </div>
+
+                    <div class="section">
+                        <h3>📊 Hình Minh Họa</h3>
+                        <div class="image-container">
+                            <img src="image.png" alt="Hình bài toán" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 1: Tìm hiểu -->
+                <div id="step1" class="step-content">
+                    <div class="section">
+                        <h3>📋 Đề Bài</h3>
+                        <p>
+                            Cho hình có diện tích 1 ô vuông là <strong style="color: #ffa116;">25cm²</strong>.
+                        </p>
+                        <div class="highlight-box" style="margin-top: 20px;">
+                            <strong>❓ Câu hỏi: Tính diện tích phần tô đậm?</strong>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <h3>📌 Các Yếu Tố Quan Trọng</h3>
+                        <ul>
+                            <li><strong>Diện tích 1 ô vuông:</strong> 25cm²</li>
+                            <li><strong>Cạnh ô vuông:</strong> √25 = 5cm</li>
+                            <li><strong>Hình dạng lưới:</strong> 3×3 ô vuông</li>
+                            <li><strong>Phần tô đậm:</strong> Dải chéo qua lưới</li>
+                        </ul>
+                    </div>
+
+                    <div class="section">
+                        <h3>🖼️ Quan Sát Hình Vẽ</h3>
+                        <div class="image-container">
+                            <img src="image.png" alt="Hình bài toán" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 2: Phân tích -->
+                <div id="step2" class="step-content">
+                    <div class="section">
+                        <h3>📊 Phân Tích Hình Vẽ</h3>
+                        <ul>
+                            <li>Lưới gồm 3×3 = <strong>9 ô vuông</strong></li>
+                            <li>Tổng diện tích lưới = 9 × 25 = <strong>225cm²</strong></li>
+                            <li>Phần tô đậm tạo thành dải chéo từ góc trái dưới đến góc phải trên</li>
+                            <li>Dải chéo có độ rộng không đều</li>
+                        </ul>
+                    </div>
+
+                    <div class="section">
+                        <h3>🔍 Cách Tính Diện Tích</h3>
+                        <ul>
+                            <li><strong>Phương pháp 1:</strong> Chia nhỏ thành các tam giác</li>
+                            <li><strong>Phương pháp 2:</strong> Đếm số ô vuông tương đương</li>
+                            <li><strong>Phương pháp 3:</strong> Sử dụng công thức hình học</li>
+                        </ul>
+                        <p style="margin-top: 15px; padding: 15px; background: #2d2d2d; border-radius: 8px;">
+                            <strong style="color: #ffa116;">Nhận xét:</strong> Phần tô đậm chiếm diện tích tương đương <strong>3 ô vuông</strong>
+                        </p>
+                    </div>
+
+                    <div class="section">
+                        <h3>🖼️ Tham Khảo</h3>
+                        <div class="image-container">
+                            <img src="image.png" alt="Hình bài toán" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3: Giải pháp -->
+                <div id="step3" class="step-content">
+                    <div class="section">
+                        <h3>📐 Lời Giải Cho Học Sinh Lớp 4</h3>
+
+                        <div style="background: #2d2d2d; padding: 15px; border-radius: 8px; margin: 15px 0;">
+                            <h4 style="color: #ffa116; margin-bottom: 10px;">Bước 1: Xác định kích thước</h4>
+                            <p style="color: #e0e0e0; line-height: 1.8;">
+                                • Diện tích 1 ô vuông = 25cm²<br>
+                                • Cạnh ô vuông = √25 = <strong style="color: #ffa116;">5cm</strong><br>
+                                • Phần tô đậm là đa giác: P20 → P17 → P18 → P1
+                            </p>
+                        </div>
+
+                        <div style="background: #2d2d2d; padding: 15px; border-radius: 8px; margin: 15px 0;">
+                            <h4 style="color: #ffa116; margin-bottom: 10px;">Bước 2: Kẻ đường phụ P1-P17</h4>
+                            <p style="color: #e0e0e0; line-height: 1.8;">
+                                Kẻ đường phụ từ P1 đến P17, chia phần tô đậm thành 2 tam giác:<br>
+                                • <strong style="color: #00FF00;">Tam giác 1:</strong> P1-P17-P20<br>
+                                • <strong style="color: #00FF00;">Tam giác 2:</strong> P1-P17-P18
+                            </p>
+                        </div>
+
+                        <div style="background: #2d2d2d; padding: 15px; border-radius: 8px; margin: 15px 0;">
+                            <h4 style="color: #ffa116; margin-bottom: 10px;">Bước 3: Tính Tam giác P1-P17-P20</h4>
+                            <p style="color: #e0e0e0; line-height: 1.8;">
+                                Tam giác P1-P17-P20 = Hình thang - Tam giác ngoài<br><br>
+
+                                <span style="color: #FFD700;">▸ Hình thang P1-A-P20-P17:</span><br>
+                                &nbsp;&nbsp;• Đáy 1 = 20cm (P1 đến A)<br>
+                                &nbsp;&nbsp;• Đáy 2 = 5cm (P17 đến P20)<br>
+                                &nbsp;&nbsp;• Chiều cao = 15cm<br>
+                                &nbsp;&nbsp;• Diện tích = ½ × (20 + 5) × 15 = <strong style="color: #FFD700;">187.5cm²</strong><br><br>
+
+                                <span style="color: #FF6B6B;">▸ Tam giác P1-A-P20 (ngoài):</span><br>
+                                &nbsp;&nbsp;• Tam giác vuông tại A<br>
+                                &nbsp;&nbsp;• Cạnh góc vuông: 20cm và 15cm<br>
+                                &nbsp;&nbsp;• Diện tích = ½ × 20 × 15 = <strong style="color: #FF6B6B;">150cm²</strong><br><br>
+
+                                <strong style="color: #00FF00;">→ Tam giác P1-P17-P20 = 187.5 - 150 = 37.5cm²</strong>
+                            </p>
+                        </div>
+
+                        <div style="background: #2d2d2d; padding: 15px; border-radius: 8px; margin: 15px 0;">
+                            <h4 style="color: #ffa116; margin-bottom: 10px;">Bước 4: Tính Tam giác P1-P17-P18</h4>
+                            <p style="color: #e0e0e0; line-height: 1.8;">
+                                Tam giác P1-P17-P18 = Hình thang - Tam giác ngoài<br><br>
+
+                                <span style="color: #FFD700;">▸ Hình thang P1-C-P18-P17:</span><br>
+                                &nbsp;&nbsp;• Đáy 1 = 20cm (P1 đến C)<br>
+                                &nbsp;&nbsp;• Đáy 2 = 5cm (P17 đến P18)<br>
+                                &nbsp;&nbsp;• Chiều cao = 15cm<br>
+                                &nbsp;&nbsp;• Diện tích = ½ × (20 + 5) × 15 = <strong style="color: #FFD700;">187.5cm²</strong><br><br>
+
+                                <span style="color: #FF6B6B;">▸ Tam giác P1-C-P18 (ngoài):</span><br>
+                                &nbsp;&nbsp;• Tam giác vuông tại C<br>
+                                &nbsp;&nbsp;• Cạnh góc vuông: 20cm và 15cm<br>
+                                &nbsp;&nbsp;• Diện tích = ½ × 20 × 15 = <strong style="color: #FF6B6B;">150cm²</strong><br><br>
+
+                                <strong style="color: #00FF00;">→ Tam giác P1-P17-P18 = 187.5 - 150 = 37.5cm²</strong>
+                            </p>
+                        </div>
+
+                        <div style="background: #2d2d00; border-left: 4px solid #ffa116; padding: 15px; border-radius: 8px;">
+                            <h4 style="color: #ffa116; margin-bottom: 10px;">✅ Kết Luận</h4>
+                            <p style="line-height: 1.8; color: #e0e0e0;">
+                                Diện tích phần tô đậm = 37.5 + 37.5 = <strong style="font-size: 1.2em;">75cm²</strong><br>
+                                <span style="color: #999;">(Tương đương 3 ô vuông)</span>
+                            </p>
+                        </div>
+
+                        <div class="section" style="margin-top: 20px;">
+                            <h3>🖼️ Minh Họa Chi Tiết</h3>
+                            <div class="image-container">
+                                <img src="step3-solution-grade4.svg" alt="Lời giải chi tiết" style="max-width: 100%; border: 2px solid #3d3d3d;" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Panel: Solution & Visualization -->
+        <div class="right-panel">
+            <div class="solution-header">
+                <h2>💡 Hình Minh Họa & Lời Giải</h2>
+            </div>
+
+            <div class="solution-content">
+                <div id="solution-container" style="display:none;">
+                    <div class="answer-box">
+                        Diện tích phần tô đậm = 75cm²
+                    </div>
+
+                    <div class="visualization-container">
+                        <h3>🖼️ Minh Họa Lời Giải</h3>
+                        <div class="image-container">
+                            <img src="step3-solution-grade4.svg" alt="Lời giải chi tiết" style="max-width: 100%;" />
+                        </div>
+                    </div>
+
+                    <div class="explanation">
+                        <h3>📐 Lời Giải Chi Tiết (Lớp 4)</h3>
+
+                        <div style="background: #1a1a1a; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                            <h4 style="color: #ffa116; margin-bottom: 10px;">🔢 Bước 1: Xác định kích thước</h4>
+                            <p style="line-height: 1.8; color: #e0e0e0;">
+                                • Diện tích 1 ô vuông = <strong>25cm²</strong><br>
+                                • Cạnh ô vuông = √25 = <strong style="color: #ffa116;">5cm</strong><br>
+                                • Phần tô đậm: đa giác P20 → P17 → P18 → P1
+                            </p>
+                        </div>
+
+                        <div style="background: #1a1a1a; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                            <h4 style="color: #ffa116; margin-bottom: 10px;">📏 Bước 2: Kẻ đường phụ P1-P17</h4>
+                            <p style="line-height: 1.8; color: #e0e0e0;">
+                                Kẻ đường phụ từ P1 đến P17 (đường màu xanh lá).<br>
+                                Chia phần tô đậm thành 2 tam giác:
+                            </p>
+                            <ul style="list-style: none; padding-left: 0; margin-top: 10px;">
+                                <li style="padding: 5px 0; color: #00FF00;">▸ Tam giác 1: <strong>P1-P17-P20</strong></li>
+                                <li style="padding: 5px 0; color: #00FF00;">▸ Tam giác 2: <strong>P1-P17-P18</strong></li>
+                            </ul>
+                        </div>
+
+                        <div style="background: #1a1a1a; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                            <h4 style="color: #ffa116; margin-bottom: 10px;">🔺 Bước 3: Tính Tam giác P1-P17-P20</h4>
+                            <p style="line-height: 1.8; color: #e0e0e0; margin-bottom: 10px;">
+                                <span style="color: #FFD700;">Hình thang P1-A-P20-P17:</span><br>
+                                &nbsp;&nbsp;½ × (20 + 5) × 15 = <strong style="color: #FFD700;">187.5cm²</strong>
+                            </p>
+                            <p style="line-height: 1.8; color: #e0e0e0; margin-bottom: 10px;">
+                                <span style="color: #FF6B6B;">Tam giác P1-A-P20 (ngoài):</span><br>
+                                &nbsp;&nbsp;½ × 20 × 15 = <strong style="color: #FF6B6B;">150cm²</strong>
+                            </p>
+                            <div style="background: #2d2d2d; padding: 10px; border-radius: 6px; text-align: center;">
+                                <p style="color: #00FF00; font-weight: bold;">
+                                    Tam giác P1-P17-P20 = 187.5 - 150 = 37.5cm²
+                                </p>
+                            </div>
+                        </div>
+
+                        <div style="background: #1a1a1a; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                            <h4 style="color: #ffa116; margin-bottom: 10px;">🔺 Bước 4: Tính Tam giác P1-P17-P18</h4>
+                            <p style="line-height: 1.8; color: #e0e0e0; margin-bottom: 10px;">
+                                <span style="color: #FFD700;">Hình thang P1-C-P18-P17:</span><br>
+                                &nbsp;&nbsp;½ × (20 + 5) × 15 = <strong style="color: #FFD700;">187.5cm²</strong>
+                            </p>
+                            <p style="line-height: 1.8; color: #e0e0e0; margin-bottom: 10px;">
+                                <span style="color: #FF6B6B;">Tam giác P1-C-P18 (ngoài):</span><br>
+                                &nbsp;&nbsp;½ × 20 × 15 = <strong style="color: #FF6B6B;">150cm²</strong>
+                            </p>
+                            <div style="background: #2d2d2d; padding: 10px; border-radius: 6px; text-align: center;">
+                                <p style="color: #00FF00; font-weight: bold;">
+                                    Tam giác P1-P17-P18 = 187.5 - 150 = 37.5cm²
+                                </p>
+                            </div>
+                        </div>
+
+                        <div style="background: #2d2d00; border-left: 4px solid #ffa116; padding: 15px; border-radius: 8px;">
+                            <h4 style="color: #ffa116; margin-bottom: 10px;">✅ Kết Luận</h4>
+                            <p style="line-height: 1.8; color: #e0e0e0; font-size: 1.1em;">
+                                Diện tích phần tô đậm = 37.5 + 37.5 = <strong style="color: #ffa116;">75cm²</strong><br>
+                                <span style="color: #999; font-size: 0.9em;">(Tương đương 3 ô vuông)</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="initial-message">
+                    <div class="visualization-container">
+                        <h3>🖼️ Hình Bài Toán</h3>
+                        <div class="image-container">
+                            <img src="image.png" alt="Hình bài toán" style="max-width: 400px;" />
+                        </div>
+                    </div>
+
+                    <div style="text-align: center; padding: 40px 20px; color: #666;">
+                        <div style="font-size: 4em; margin-bottom: 20px;">📐</div>
+                        <h3 style="color: #ffa116; margin-bottom: 15px;">Sẵn sàng để xem lời giải?</h3>
+                        <p style="margin-bottom: 20px;">Nhấn nút "Xem Lời Giải" ở trên để xem lời giải chi tiết</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="solution.js"></script>
+    <script>
+        function showStep(stepNumber) {
+            // Update tabs
+            const tabs = document.querySelectorAll('.step-tab');
+            const contents = document.querySelectorAll('.step-content');
+
+            tabs.forEach((tab, index) => {
+                tab.classList.toggle('active', index === stepNumber);
+            });
+
+            contents.forEach((content, index) => {
+                content.classList.toggle('active', index === stepNumber);
+            });
+        }
+
+        function showSolution() {
+            document.getElementById('initial-message').style.display = 'none';
+            document.getElementById('solution-container').style.display = 'block';
+        }
+
+        // Run solution in console
+        window.addEventListener('load', () => {
+            if (typeof getSolution === 'function') {
+                const solution = getSolution();
+                console.log('=== BÀI TOÁN HÌNH HỌC ===');
+                console.log(`Diện tích phần tô đậm: ${solution.shadedArea}cm²`);
+                console.table(solution.explanation);
+            }
+        });
+    </script>
+</body>
+</html>

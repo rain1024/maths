@@ -7,7 +7,8 @@
       "Bash(yarn add:*)",
       "Bash(yarn:*)",
       "Bash(cat:*)",
-      "Bash(pdflatex:*)"
+      "Bash(pdflatex:*)",
+      "Bash(open:*)"
     ],
     "deny": [],
     "ask": []

@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="600" height="600" viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg">
+  <!-- Bước 2: Lưới + Phần tô đậm -->
+
+  <defs>
+    <style>
+      .grid-line { stroke: #666; stroke-width: 2; fill: none; }
+      .grid-border { stroke: #000; stroke-width: 3; fill: none; }
+      .point { fill: red; }
+      .point-label { font-size: 16px; font-weight: bold; fill: red; font-family: Arial; }
+      .shaded { fill: #7B68BB; fill-opacity: 0.7; stroke: #5B48AA; stroke-width: 2; }
+    </style>
+  </defs>
+
+  <!-- Grid: Mỗi ô = 100px (đại diện cho 5cm) -->
+
+  <!-- Vẽ lưới 3x3 cơ bản -->
+  <rect x="100" y="400" width="100" height="100" class="grid-border"/>
+  <rect x="200" y="400" width="100" height="100" class="grid-border"/>
+  <rect x="300" y="400" width="100" height="100" class="grid-border"/>
+
+  <rect x="100" y="300" width="100" height="100" class="grid-border"/>
+  <rect x="200" y="300" width="100" height="100" class="grid-border"/>
+  <rect x="300" y="300" width="100" height="100" class="grid-border"/>
+
+  <rect x="100" y="200" width="100" height="100" class="grid-border"/>
+  <rect x="200" y="200" width="100" height="100" class="grid-border"/>
+  <rect x="300" y="200" width="100" height="100" class="grid-border"/>
+
+  <!-- Thêm 3 ô ở trên-phải -->
+  <rect x="300" y="100" width="100" height="100" class="grid-border" stroke="blue"/>
+  <rect x="400" y="100" width="100" height="100" class="grid-border" stroke="blue"/>
+  <rect x="400" y="200" width="100" height="100" class="grid-border" stroke="blue"/>
+
+  <!-- PHẦN TÔ ĐẬM: Đa giác P20 → P17 → P18 → P1 → P20 -->
+  <polygon points="400,100 400,200 500,200 100,500 400,100" class="shaded"/>
+
+  <!-- Đánh dấu các điểm quan trọng -->
+
+  <!-- P1 (100, 500) -->
+  <circle cx="100" cy="500" r="5" class="point"/>
+  <text x="70" y="520" class="point-label">P1</text>
+
+  <!-- P17 (400, 200) -->
+  <circle cx="400" cy="200" r="5" class="point"/>
+  <text x="410" y="205" class="point-label">P17</text>
+
+  <!-- P18 (500, 200) -->
+  <circle cx="500" cy="200" r="5" class="point"/>
+  <text x="510" y="205" class="point-label">P18</text>
+
+  <!-- P20 (400, 100) -->
+  <circle cx="400" cy="100" r="5" class="point"/>
+  <text x="410" y="95" class="point-label">P20</text>
+
+  <!-- Vẽ các điểm khác nhạt hơn -->
+  <circle cx="200" cy="500" r="3" fill="#ccc"/>
+  <text x="185" y="520" style="font-size: 12px; fill: #999;">P2</text>
+
+  <circle cx="300" cy="500" r="3" fill="#ccc"/>
+  <text x="285" y="520" style="font-size: 12px; fill: #999;">P3</text>
+
+  <circle cx="400" cy="500" r="3" fill="#ccc"/>
+  <text x="385" y="520" style="font-size: 12px; fill: #999;">P4</text>
+
+  <circle cx="100" cy="400" r="3" fill="#ccc"/>
+  <text x="70" y="405" style="font-size: 12px; fill: #999;">P5</text>
+
+  <circle cx="200" cy="400" r="3" fill="#ccc"/>
+  <text x="185" y="395" style="font-size: 12px; fill: #999;">P6</text>
+
+  <circle cx="300" cy="400" r="3" fill="#ccc"/>
+  <text x="285" y="395" style="font-size: 12px; fill: #999;">P7</text>
+
+  <circle cx="400" cy="400" r="3" fill="#ccc"/>
+  <text x="385" y="395" style="font-size: 12px; fill: #999;">P8</text>
+
+  <circle cx="100" cy="300" r="3" fill="#ccc"/>
+  <text x="70" y="305" style="font-size: 12px; fill: #999;">P9</text>
+
+  <circle cx="200" cy="300" r="3" fill="#ccc"/>
+  <text x="185" y="295" style="font-size: 12px; fill: #999;">P10</text>
+
+  <circle cx="300" cy="300" r="3" fill="#ccc"/>
+  <text x="285" y="295" style="font-size: 12px; fill: #999;">P11</text>
+
+  <circle cx="400" cy="300" r="3" fill="#ccc"/>
+  <text x="385" y="295" style="font-size: 12px; fill: #999;">P12</text>
+
+  <circle cx="500" cy="300" r="3" fill="#ccc"/>
+  <text x="485" y="295" style="font-size: 12px; fill: #999;">P13</text>
+
+  <circle cx="100" cy="200" r="3" fill="#ccc"/>
+  <text x="70" y="205" style="font-size: 12px; fill: #999;">P14</text>
+
+  <circle cx="200" cy="200" r="3" fill="#ccc"/>
+  <text x="185" y="195" style="font-size: 12px; fill: #999;">P15</text>
+
+  <circle cx="300" cy="200" r="3" fill="#ccc"/>
+  <text x="285" y="195" style="font-size: 12px; fill: #999;">P16</text>
+
+  <circle cx="500" cy="200" r="3" fill="#ccc"/>
+  <text x="485" y="195" style="font-size: 12px; fill: #999;">P18</text>
+
+  <circle cx="300" cy="100" r="3" fill="#ccc"/>
+  <text x="285" y="95" style="font-size: 12px; fill: #999;">P19</text>
+
+  <circle cx="500" cy="100" r="3" fill="#ccc"/>
+  <text x="485" y="95" style="font-size: 12px; fill: #999;">P21</text>
+
+  <!-- Vẽ đường nối để thấy rõ đa giác -->
+  <polyline points="400,100 400,200 500,200 100,500 400,100"
+            fill="none" stroke="red" stroke-width="3" stroke-dasharray="5,5" opacity="0.5"/>
+
+  <!-- Title -->
+  <text x="150" y="50" style="font-size: 20px; font-weight: bold; fill: #333;">Bước 2: Phần tô đậm P20→P17→P18→P1→P20</text>
+  <text x="150" y="570" style="font-size: 14px; fill: #666;">Đa giác tô màu tím với đường viền đỏ đứt nét</text>
+</svg>

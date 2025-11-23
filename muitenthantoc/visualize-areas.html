@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head><title>Visualize Areas</title></head>
+<body>
+<svg width="800" height="800" viewBox="-50 -50 500 500">
+  <!-- Hệ tọa độ: (0,0) góc dưới trái, Y tăng lên trên -->
+  <g transform="translate(0,400) scale(1,-1)">
+    
+    <!-- Hình chữ nhật bao quanh -->
+    <rect x="0" y="0" width="200" height="200" fill="none" stroke="black" stroke-width="2"/>
+    
+    <!-- Phần TÔ ĐẬM (P20-P17-P18-P1) -->
+    <polygon points="150,200 150,150 200,150 0,0" fill="purple" fill-opacity="0.5" stroke="purple" stroke-width="3"/>
+    
+    <!-- Vẽ các hình "bên ngoài" để kiểm tra -->
+    <!-- ② Hình chữ nhật trên trái -->
+    <rect x="0" y="150" width="150" height="50" fill="yellow" fill-opacity="0.3" stroke="orange" stroke-width="2"/>
+    
+    <!-- ③ Tam giác trên phải -->
+    <polygon points="150,200 200,200 200,150" fill="cyan" fill-opacity="0.3" stroke="blue" stroke-width="2"/>
+    
+    <!-- ④ Hình chữ nhật dưới phải -->
+    <rect x="150" y="0" width="50" height="150" fill="pink" fill-opacity="0.3" stroke="red" stroke-width="2"/>
+    
+    <!-- Đánh dấu các điểm -->
+    <circle cx="0" cy="0" r="5" fill="red"/>
+    <circle cx="150" cy="150" r="5" fill="red"/>
+    <circle cx="200" cy="150" r="5" fill="red"/>
+    <circle cx="150" cy="200" r="5" fill="red"/>
+    
+  </g>
+  
+  <!-- Labels (không bị flip) -->
+  <text x="10" y="390">P1</text>
+  <text x="160" y="240">P17</text>
+  <text x="210" y="240">P18</text>
+  <text x="160" y="190">P20</text>
+  
+  <text x="250" y="50" style="font-size:16px; font-weight:bold">Phần màu tím = phần tô đậm</text>
+  <text x="250" y="70">Các màu khác = phần "bên ngoài"?</text>
+</svg>
+</body>
+</html>

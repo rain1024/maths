@@ -1,0 +1,175 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[vietnamese]{babel}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+\usepackage{xcolor}
+\usepackage{tcolorbox}
+
+% Header and footer
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{Bài Toán Vòng Tròn}
+\lhead{Toán Tư Duy}
+\rfoot{Trang \thepage}
+
+\title{\textbf{Bài Toán Vòng Tròn}\\\large Tìm Vị Trí Người Đọc Số}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section{Đề bài}
+
+Có 20 người đứng thành vòng tròn, tất cả đều quay mặt vào tâm, các vị trí đứng được đánh số thứ tự từ 1 đến 20 theo chiều kim đồng hồ. Họ đọc các số tự nhiên từ 1, 2, 3, \ldots theo chiều kim đồng hồ như sau:
+
+\begin{itemize}[leftmargin=*]
+    \item Người đứng ở vị trí thứ nhất đọc số 1.
+    \item Người đứng ở vị trí thứ hai đọc số 2.
+    \item Người đứng ở vị trí thứ ba đọc số 3.
+    \item \ldots
+\end{itemize}
+
+Người kế tiếp đọc số tự nhiên lớn hơn 1 đơn vị so với số mình vừa nghe của người bên cạnh đọc.
+
+\vspace{0.5cm}
+\begin{tcolorbox}[colback=yellow!10!white,colframe=orange!75!black,title=\textbf{Câu hỏi}]
+Hỏi người đứng ở vị trí bao nhiêu sẽ đọc số 2012?
+\end{tcolorbox}
+
+\section{Phân tích bài toán}
+
+\subsection{Dữ kiện cho}
+\begin{itemize}[leftmargin=*]
+    \item Số người trong vòng tròn: $n = 20$
+    \item Các vị trí được đánh số từ 1 đến 20 theo chiều kim đồng hồ
+    \item Cách đọc số: Theo chiều kim đồng hồ, liên tiếp từ 1, 2, 3, \ldots
+    \item Số cần tìm vị trí: $\text{target} = 2012$
+\end{itemize}
+
+\subsection{Cần tìm}
+Vị trí của người đọc số 2012.
+
+\subsection{Nhận xét quan trọng}
+
+Quan sát cách đọc số của từng vị trí:
+\begin{itemize}[leftmargin=*]
+    \item Người ở vị trí 1 đọc: 1, 21, 41, 61, \ldots (công sai = 20)
+    \item Người ở vị trí 2 đọc: 2, 22, 42, 62, \ldots (công sai = 20)
+    \item Người ở vị trí 3 đọc: 3, 23, 43, 63, \ldots (công sai = 20)
+    \item \ldots
+    \item Người ở vị trí $k$ đọc: $k, k+n, k+2n, k+3n, \ldots$
+\end{itemize}
+
+\textbf{Kết luận:} Vấn đề trở thành tìm $k$ sao cho số 2012 có dạng $k + m \times n$ với $m$ là số nguyên không âm và $1 \leq k \leq n$.
+
+\section{Lời giải chi tiết}
+
+\subsection{Cách suy nghĩ}
+
+Hãy tưởng tượng: Có 20 bạn đứng thành vòng tròn. Các bạn lần lượt đọc số từ 1, 2, 3, 4, \ldots Khi đến bạn cuối cùng (vị trí 20), bạn tiếp theo (vị trí 1) sẽ đọc tiếp.
+
+\textbf{Điểm quan trọng:} Cứ mỗi 20 số, lại quay lại vị trí đầu tiên!
+
+\subsection{Bước 1: Tìm quy luật chung}
+
+Hãy xem các bạn ở các vị trí khác nhau sẽ đọc những số nào:
+\begin{align*}
+\text{Vị trí 1:} &\quad 1, 21, 41, 61, \ldots \\
+\text{Vị trí 2:} &\quad 2, 22, 42, 62, \ldots \\
+\text{Vị trí 3:} &\quad 3, 23, 43, 63, \ldots \\
+&\vdots
+\end{align*}
+
+\textbf{Quy luật:} Người ở vị trí nào đó sẽ đọc các số cách nhau 20 đơn vị!
+
+Tổng quát: Người vị trí $k$ đọc: $k, k+20, k+40, k+60, \ldots$
+
+\subsection{Bước 2: Chia để tìm vị trí}
+
+Để tìm ai đọc số 2012, ta làm phép chia:
+
+\begin{tcolorbox}[colback=blue!5!white,colframe=blue!75!black]
+\begin{center}
+$2012 \div 20 = 100$ dư $12$
+\end{center}
+\end{tcolorbox}
+
+Giải thích:
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Thương 100:} Nghĩa là vòng tròn đã quay được 100 vòng đầy đủ
+    \item \textbf{Dư 12:} Đây chính là vị trí của người đọc số 2012!
+\end{itemize}
+
+\subsection{Bước 3: Kiểm tra lại}
+
+Hãy kiểm tra xem đáp án có đúng không:
+
+Người ở vị trí 12 đọc số thứ 101 (vì đã qua 100 vòng rồi đọc thêm 1 số nữa).
+
+Tính: $12 + 100 \times 20 = 12 + 2000 = 2012$ \quad $\checkmark$
+
+\subsection{Công thức tổng quát}
+
+Cho $n$ người đứng thành vòng tròn, muốn tìm vị trí của người đọc số $k$:
+
+\begin{tcolorbox}[colback=green!5!white,colframe=green!75!black,title=\textbf{Công thức}]
+$$P = \begin{cases}
+k \bmod n & \text{nếu } k \bmod n \neq 0 \\
+n & \text{nếu } k \bmod n = 0
+\end{cases}$$
+
+Trong đó:
+\begin{itemize}[leftmargin=*]
+    \item $P$ = vị trí cần tìm
+    \item $n$ = số người trong vòng tròn
+    \item $k$ = số cần tìm vị trí
+\end{itemize}
+\end{tcolorbox}
+
+\subsection{Giải thích công thức}
+
+\begin{itemize}[leftmargin=*]
+    \item Phép chia có dư (modulo) cho biết vị trí trong chu kỳ
+    \item Nếu chia hết (dư 0) $\rightarrow$ vị trí cuối cùng trong vòng
+    \item Nếu còn dư $\rightarrow$ dư chính là vị trí cần tìm
+    \item Độ phức tạp: $O(1)$ - rất hiệu quả!
+\end{itemize}
+
+\section{Đáp án}
+
+\begin{tcolorbox}[colback=orange!5!white,colframe=orange!75!black,title=\textbf{Kết luận}]
+\begin{center}
+\Large
+Người đứng ở vị trí \textbf{12} sẽ đọc số 2012.
+\end{center}
+\end{tcolorbox}
+
+\vspace{0.5cm}
+
+\textbf{Mẹo nhỏ:} Muốn biết ai đọc một số bất kỳ, chỉ cần lấy số đó chia cho số người trong vòng tròn, số dư chính là vị trí cần tìm! (Nếu chia hết thì là vị trí cuối cùng)
+
+\section{Ứng dụng thực tế}
+
+Bài toán này có nhiều ứng dụng trong thực tế:
+
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{Lập lịch:} Xác định thứ trong tuần của ngày bất kỳ
+    \item \textbf{Mật mã:} Caesar cipher và các biến thể
+    \item \textbf{Trò chơi:} Josephus problem (loại bỏ người)
+    \item \textbf{Khoa học máy tính:} Hash table circular addressing
+\end{enumerate}
+
+\section{Các biến thể thú vị}
+
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{Biến thể 1:} Nếu đọc ngược chiều kim đồng hồ thì sao?
+    \item \textbf{Biến thể 2:} Nếu mỗi lần đếm cách 1 người (1, 3, 5, \ldots) thì sao?
+    \item \textbf{Biến thể 3:} Tìm tất cả vị trí đọc số dạng $100k + 12$
+    \item \textbf{Biến thể 4:} Nếu bắt đầu đếm từ số 0 thay vì 1?
+\end{enumerate}
+
+\end{document}
