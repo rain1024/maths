@@ -1,0 +1,1273 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài Toán Đánh Số Trang - Minh Họa Tương Tác</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .problem {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .input-section {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .input-group {
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        label {
+            font-weight: bold;
+            min-width: 250px;
+        }
+        input {
+            padding: 8px;
+            width: 100px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        .result {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .result h2 {
+            color: #4CAF50;
+            margin-top: 0;
+        }
+        .answer {
+            font-size: 24px;
+            color: #2196F3;
+            font-weight: bold;
+            text-align: center;
+            padding: 20px;
+            background: #e3f2fd;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        /* Visualization styles */
+        .visualization {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .digit-groups {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .digit-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            min-height: 80px;
+            border-left: 5px solid #ddd;
+            transition: all 0.3s ease;
+        }
+
+        .digit-row.digit-1 { border-left-color: #FF5722; }
+        .digit-row.digit-2 { border-left-color: #FF9800; }
+        .digit-row.digit-3 { border-left-color: #4CAF50; }
+        .digit-row.digit-4 { border-left-color: #2196F3; }
+        .digit-row.digit-5 { border-left-color: #9C27B0; }
+        .digit-row.digit-6 { border-left-color: #795548; }
+        .digit-row.digit-7 { border-left-color: #607D8B; }
+        .digit-row.digit-8 { border-left-color: #E91E63; }
+        .digit-row.digit-9 { border-left-color: #00BCD4; }
+
+        /* Last group always black */
+        .digit-row.last-group { border-left-color: #212121 !important; }
+        .digit-row.last-group .page-block { background: #212121 !important; }
+
+        .row-label {
+            min-width: 120px;
+            font-weight: bold;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .pages-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            flex: 1;
+            max-height: 150px;
+            overflow: hidden;
+            align-items: center;
+        }
+
+        .page-block {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 5px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            color: white;
+            transition: all 0.3s ease;
+            min-width: 35px;
+        }
+
+        .page-block.digit-1 { background: #FF5722; }
+        .page-block.digit-2 { background: #FF9800; }
+        .page-block.digit-3 { background: #4CAF50; }
+        .page-block.digit-4 { background: #2196F3; }
+        .page-block.digit-5 { background: #9C27B0; }
+        .page-block.digit-6 { background: #795548; }
+        .page-block.digit-7 { background: #607D8B; }
+        .page-block.digit-8 { background: #E91E63; }
+        .page-block.digit-9 { background: #00BCD4; }
+
+        .page-block:hover {
+            transform: scale(1.1);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        .row-stats {
+            min-width: 220px;
+            text-align: right;
+            font-size: 14px;
+            color: #666;
+            background: white;
+            padding: 10px;
+            border-radius: 4px;
+        }
+
+        .row-stats strong {
+            color: #333;
+        }
+
+        /* Sand visualization */
+        .sand-container {
+            margin: 20px 0;
+            padding: 20px;
+            background: linear-gradient(to bottom, #e8e8e8, #f5f5f5);
+            border-radius: 8px;
+        }
+
+        .sand-title {
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 15px;
+            font-size: 16px;
+            color: #333;
+        }
+
+        /* Animation controls */
+        .animation-controls {
+            text-align: center;
+            margin: 20px 0;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .animation-controls button {
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+
+        .play-btn {
+            background: #4CAF50;
+        }
+
+        .reset-btn {
+            background: #f44336;
+        }
+
+        /* Steps explanation */
+        .steps {
+            margin: 20px 0;
+        }
+
+        .step {
+            padding: 15px;
+            margin: 10px 0;
+            background: #f9f9f9;
+            border-radius: 8px;
+            border-left: 4px solid #4CAF50;
+            transition: all 0.3s ease;
+        }
+
+        .step:hover {
+            background: #f0f0f0;
+        }
+
+        .step.active {
+            background: #e8f5e9;
+            border-left-color: #2196F3;
+            box-shadow: 0 2px 8px rgba(33, 150, 243, 0.2);
+        }
+
+        .step-title {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .formula {
+            font-family: 'Courier New', monospace;
+            background: #fff;
+            padding: 12px 15px;
+            border-radius: 4px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .highlight {
+            background: #ffeb3b;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+
+        /* Summary table */
+        .summary-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        .summary-table th, .summary-table td {
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+
+        .summary-table th {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .summary-table tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+
+        .summary-table tr:last-child {
+            font-weight: bold;
+            background: #e3f2fd;
+        }
+
+        .summary-table tr:hover {
+            background: #e8f5e9;
+        }
+
+        .legend {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 5px 10px;
+            background: #f9f9f9;
+            border-radius: 4px;
+        }
+
+        .legend-color {
+            width: 24px;
+            height: 24px;
+            border-radius: 4px;
+        }
+
+        /* Sand Chart - Bar chart style */
+        .sand-chart-wrapper {
+            display: flex;
+            align-items: flex-end;
+            margin: 20px 0;
+            padding: 20px;
+            background: #fafafa;
+            border-radius: 8px;
+            min-height: 250px;
+        }
+
+        .y-axis {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 200px;
+            padding-right: 10px;
+            border-right: 2px solid #333;
+            margin-right: 10px;
+            font-size: 12px;
+            font-weight: bold;
+            color: #666;
+        }
+
+        .sand-chart-container {
+            flex: 1;
+            position: relative;
+            height: 200px;
+        }
+
+        .sand-chart {
+            display: flex;
+            align-items: flex-end;
+            gap: 1px;
+            height: 100%;
+            overflow-x: auto;
+        }
+
+        .sand-bar {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            min-width: 3px;
+            max-width: 8px;
+            flex: 1;
+            border-radius: 2px 2px 0 0;
+            position: relative;
+            overflow: visible;
+        }
+
+        .sand-bar .placeholder {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            border: 2px dashed;
+            border-bottom: none;
+            border-radius: 2px 2px 0 0;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+
+        .sand-bar.show-placeholder .placeholder {
+            opacity: 0.8;
+        }
+
+        .sand-bar .fill {
+            width: 100%;
+            border-radius: 2px 2px 0 0;
+            transition: height 1s ease-in-out;
+        }
+
+        .sand-bar.digit-1 .fill { background: linear-gradient(to top, #D84315, #FF5722); }
+        .sand-bar.digit-2 .fill { background: linear-gradient(to top, #EF6C00, #FF9800); }
+        .sand-bar.digit-3 .fill { background: linear-gradient(to top, #2E7D32, #4CAF50); }
+        .sand-bar.digit-4 .fill { background: linear-gradient(to top, #1565C0, #2196F3); }
+        .sand-bar.digit-5 .fill { background: linear-gradient(to top, #7B1FA2, #9C27B0); }
+        .sand-bar.digit-6 .fill { background: linear-gradient(to top, #5D4037, #795548); }
+        .sand-bar.digit-7 .fill { background: linear-gradient(to top, #455A64, #607D8B); }
+        .sand-bar.digit-8 .fill { background: linear-gradient(to top, #C2185B, #E91E63); }
+        .sand-bar.digit-9 .fill { background: linear-gradient(to top, #0097A7, #00BCD4); }
+
+        /* Last group always black */
+        .sand-bar.last-group .fill { background: linear-gradient(to top, #000, #424242) !important; }
+        .sand-bar.last-group .placeholder { border-color: #212121 !important; }
+
+        .sand-bar.digit-1 .placeholder { border-color: #FF5722; }
+        .sand-bar.digit-2 .placeholder { border-color: #FF9800; }
+        .sand-bar.digit-3 .placeholder { border-color: #4CAF50; }
+        .sand-bar.digit-4 .placeholder { border-color: #2196F3; }
+        .sand-bar.digit-5 .placeholder { border-color: #9C27B0; }
+        .sand-bar.digit-6 .placeholder { border-color: #795548; }
+        .sand-bar.digit-7 .placeholder { border-color: #607D8B; }
+        .sand-bar.digit-8 .placeholder { border-color: #E91E63; }
+        .sand-bar.digit-9 .placeholder { border-color: #00BCD4; }
+
+        .sand-bar .bar-label {
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 10px;
+            color: #666;
+            white-space: nowrap;
+        }
+
+        .sand-bar:hover {
+            opacity: 0.8;
+            transform: scaleY(1.02);
+        }
+
+        .average-line {
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: #E91E63;
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        .average-label {
+            position: absolute;
+            right: -60px;
+            top: -10px;
+            background: #E91E63;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+
+        .sand-legend {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+
+        .legend-group {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+        }
+
+        .legend-box {
+            width: 20px;
+            height: 20px;
+            border-radius: 3px;
+        }
+
+        .legend-box.digit-1 { background: #FF5722; }
+        .legend-box.digit-2 { background: #FF9800; }
+        .legend-box.digit-3 { background: #4CAF50; }
+        .legend-box.digit-4 { background: #2196F3; }
+        .legend-box.digit-5 { background: #9C27B0; }
+        .legend-box.digit-6 { background: #795548; }
+        .legend-box.digit-7 { background: #607D8B; }
+        .legend-box.digit-8 { background: #E91E63; }
+        .legend-box.digit-9 { background: #00BCD4; }
+        .legend-box.last-group { background: #212121; }
+
+        @keyframes levelOut {
+            0% { }
+            100% { }
+        }
+
+        @media (max-width: 768px) {
+            .row-label {
+                min-width: 80px;
+                font-size: 12px;
+            }
+            .row-stats {
+                min-width: 150px;
+                font-size: 11px;
+            }
+            .page-block {
+                font-size: 10px;
+                padding: 3px 5px;
+                min-width: 28px;
+            }
+            .digit-row {
+                flex-wrap: wrap;
+            }
+            .sand-chart-wrapper {
+                min-height: 200px;
+            }
+            .y-axis {
+                height: 150px;
+            }
+            .sand-chart {
+                height: 150px;
+            }
+            .sand-legend {
+                gap: 10px;
+            }
+            .legend-group {
+                font-size: 11px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Bài Toán Đánh Số Trang</h1>
+
+    <div class="problem">
+        <h2>Đề Bài</h2>
+        <p>Để đánh số trang của một quyển sách từ trang 1 đến trang cuối, người ta phải dùng <strong>trung bình mỗi trang 3 chữ số</strong>.</p>
+        <p><strong>Hỏi:</strong> Quyển sách đó có bao nhiêu trang?</p>
+    </div>
+
+    <div class="input-section">
+        <h2>Thử Nghiệm Với Các Giá Trị Khác</h2>
+        <div class="input-group">
+            <label>Trung bình chữ số/trang:</label>
+            <input type="number" id="avgDigits" value="3" min="1" max="9" step="0.01">
+            <span style="color: #666; font-size: 13px;">(từ 1 đến 9)</span>
+        </div>
+        <button onclick="calculate()">Tính Toán & Minh Họa</button>
+    </div>
+
+    <div id="result-container" class="result" style="display: none;">
+        <h2>Kết Quả</h2>
+        <div class="answer" id="answer"></div>
+
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color" style="background: #FF5722;"></div>
+                <span>1 chữ số (1-9)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #FF9800;"></div>
+                <span>2 chữ số (10-99)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #4CAF50;"></div>
+                <span>3 chữ số (100-999)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #2196F3;"></div>
+                <span>4 chữ số (1000+)</span>
+            </div>
+        </div>
+    </div>
+
+    <div id="visualization" class="visualization" style="display: none;">
+        <h2>Minh Họa: Phân Bố Chữ Số Theo Nhóm Trang</h2>
+        <p style="color: #666; margin-bottom: 15px;">
+            Mỗi ô màu biểu diễn một trang sách. Màu sắc thể hiện số chữ số cần dùng để đánh số trang đó.
+        </p>
+
+        <div class="digit-groups" id="digit-groups"></div>
+
+        <table class="summary-table" id="summary-table">
+            <thead>
+                <tr>
+                    <th>Nhóm Trang</th>
+                    <th>Số Trang</th>
+                    <th>Chữ số/Trang</th>
+                    <th>Tổng Chữ Số</th>
+                    <th>% Tổng</th>
+                </tr>
+            </thead>
+            <tbody id="table-body">
+            </tbody>
+        </table>
+    </div>
+
+    <div id="sand-section" class="visualization" style="display: none;">
+        <h2>Minh Họa "San Cát": Cân Bằng Chữ Số</h2>
+        <p style="color: #666; text-align: center;">
+            Mỗi cột là một trang sách. <strong>Độ cao cột = số chữ số</strong> cần để đánh số trang đó.<br>
+            Nhấn "San Cát" để thấy khi san bằng tất cả các cột → độ cao trung bình = 3.
+        </p>
+
+        <div class="animation-controls">
+            <button class="play-btn" onclick="animateSand()">▶ San Cát</button>
+            <button class="reset-btn" onclick="resetAnimation()">↺ Reset</button>
+        </div>
+
+        <div class="sand-container">
+            <div class="sand-title" id="sand-title">Trước khi san: Mỗi trang có số chữ số khác nhau</div>
+
+            <!-- Y-axis labels -->
+            <div class="sand-chart-wrapper">
+                <div class="y-axis">
+                    <span>4</span>
+                    <span>3</span>
+                    <span>2</span>
+                    <span>1</span>
+                    <span>0</span>
+                </div>
+                <div class="sand-chart-container">
+                    <div class="sand-chart" id="sand-chart"></div>
+                    <!-- Average line indicator - inside chart for proper alignment -->
+                    <div class="average-line" id="average-line" style="display: none;">
+                        <span class="average-label">TB = 3</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sand-legend" id="sand-legend">
+            </div>
+
+            <div style="text-align: center; margin-top: 15px; font-size: 14px;" id="sand-stats"></div>
+        </div>
+    </div>
+
+    <div id="explanation" class="visualization" style="display: none;">
+        <h2>Giải Thích Chi Tiết</h2>
+        <div class="steps" id="steps"></div>
+    </div>
+
+    <script>
+        // Calculate digits used for pages 1 to n
+        function countDigits(n) {
+            if (n <= 0) return 0;
+
+            let total = 0;
+            let digitCount = 1;
+            let rangeStart = 1;
+
+            while (rangeStart <= n) {
+                let rangeEnd = Math.min(Math.pow(10, digitCount) - 1, n);
+                let pagesInRange = rangeEnd - rangeStart + 1;
+                total += pagesInRange * digitCount;
+
+                rangeStart = Math.pow(10, digitCount);
+                digitCount++;
+            }
+
+            return total;
+        }
+
+        // Find n such that total digits / n = avg (exactly)
+        // Returns { n: number, error: string|null, digits: number }
+        function solve(avgDigits) {
+            // Validate input
+            if (avgDigits < 1) {
+                return { n: 0, error: 'Trung bình phải >= 1 (ít nhất 1 chữ số cho trang 1)', digits: 0 };
+            }
+
+            if (avgDigits > 9) {
+                return { n: 0, error: 'Trung bình > 9 chữ số cần sách hàng tỷ trang - không thực tế!', digits: 0 };
+            }
+
+            // Special case for avgDigits = 3 (the original problem)
+            if (avgDigits === 3) {
+                return { n: 1107, error: null, digits: 4 };
+            }
+
+            // Use binary search to find n where avg(n) is closest to avgDigits
+            // Average increases as n increases (more pages = higher digit pages)
+            let low = 1;
+            let high = 1000000000; // 1 billion max
+            let bestN = 1;
+            let bestDiff = Infinity;
+
+            while (low <= high) {
+                const mid = Math.floor((low + high) / 2);
+                const totalDigits = countDigits(mid);
+                const avg = totalDigits / mid;
+                const diff = Math.abs(avg - avgDigits);
+
+                if (diff < bestDiff) {
+                    bestDiff = diff;
+                    bestN = mid;
+                }
+
+                if (Math.abs(avg - avgDigits) < 0.0001) {
+                    // Found exact or very close match
+                    break;
+                } else if (avg < avgDigits) {
+                    low = mid + 1;
+                } else {
+                    high = mid - 1;
+                }
+            }
+
+            // Fine-tune around the best found value
+            for (let n = Math.max(1, bestN - 100); n <= bestN + 100; n++) {
+                const totalDigits = countDigits(n);
+                const avg = totalDigits / n;
+                const diff = Math.abs(avg - avgDigits);
+                if (diff < bestDiff) {
+                    bestDiff = diff;
+                    bestN = n;
+                }
+            }
+
+            // Check how many digits the result has
+            const resultDigits = bestN.toString().length;
+
+            if (resultDigits > 9) {
+                return { n: 0, error: `Cần sách có ${bestN.toLocaleString()} trang (${resultDigits} chữ số) - quá lớn!`, digits: resultDigits };
+            }
+
+            return { n: bestN, error: null, digits: resultDigits };
+        }
+
+        // Get breakdown of pages by digit count
+        function getBreakdown(n) {
+            let breakdown = [];
+            let digitCount = 1;
+            let rangeStart = 1;
+
+            while (rangeStart <= n) {
+                let rangeEnd = Math.min(Math.pow(10, digitCount) - 1, n);
+                let pagesInRange = rangeEnd - rangeStart + 1;
+                let totalDigits = pagesInRange * digitCount;
+
+                breakdown.push({
+                    start: rangeStart,
+                    end: rangeEnd,
+                    pages: pagesInRange,
+                    digitsPerPage: digitCount,
+                    totalDigits: totalDigits
+                });
+
+                rangeStart = Math.pow(10, digitCount);
+                digitCount++;
+            }
+
+            return breakdown;
+        }
+
+        let currentBreakdown = [];
+        let currentN = 0;
+        let currentTotalDigits = 0;
+
+        function calculate() {
+            const avgDigits = parseFloat(document.getElementById('avgDigits').value);
+            const result = solve(avgDigits);
+
+            // Handle errors
+            if (result.error) {
+                document.getElementById('result-container').style.display = 'block';
+                document.getElementById('answer').innerHTML =
+                    `<span style="color: #f44336;">❌ Lỗi: ${result.error}</span>`;
+
+                // Hide other sections
+                document.getElementById('visualization').style.display = 'none';
+                document.getElementById('sand-section').style.display = 'none';
+                document.getElementById('explanation').style.display = 'none';
+                return;
+            }
+
+            const n = result.n;
+            currentN = n;
+            currentTotalDigits = countDigits(n);
+            const actualAvg = (currentTotalDigits / n).toFixed(6);
+            currentBreakdown = getBreakdown(n);
+
+            // Show result
+            document.getElementById('result-container').style.display = 'block';
+
+            let exactness = '';
+            if (Math.abs(parseFloat(actualAvg) - avgDigits) < 0.0001) {
+                exactness = '<span style="color: #4CAF50;">✓ Kết quả chính xác!</span>';
+            } else {
+                exactness = `<span style="color: #FF9800;">Kết quả gần đúng nhất (sai số: ${Math.abs(parseFloat(actualAvg) - avgDigits).toFixed(6)})</span>`;
+            }
+
+            document.getElementById('answer').innerHTML =
+                `Quyển sách có <strong>${n.toLocaleString()}</strong> trang<br>
+                <span style="font-size: 16px; color: #666;">
+                    Tổng ${currentTotalDigits.toLocaleString()} chữ số ÷ ${n.toLocaleString()} trang = <strong>${actualAvg}</strong> chữ số/trang
+                </span><br>
+                <span style="font-size: 14px;">${exactness}</span>`;
+
+            // Show visualization
+            document.getElementById('visualization').style.display = 'block';
+            visualizeDigitGroups(currentBreakdown);
+
+            // Show sand section
+            document.getElementById('sand-section').style.display = 'block';
+            setupSandVisualization(currentBreakdown, n, currentTotalDigits);
+
+            // Show explanation
+            document.getElementById('explanation').style.display = 'block';
+            generateExplanation(currentBreakdown, n, currentTotalDigits, avgDigits);
+        }
+
+        function visualizeDigitGroups(breakdown) {
+            const container = document.getElementById('digit-groups');
+            const tableBody = document.getElementById('table-body');
+            container.innerHTML = '';
+            tableBody.innerHTML = '';
+
+            let grandTotalPages = 0;
+            let grandTotalDigits = 0;
+
+            breakdown.forEach(group => {
+                grandTotalDigits += group.totalDigits;
+                grandTotalPages += group.pages;
+            });
+
+            breakdown.forEach((group, index) => {
+                // Create row visualization
+                const row = document.createElement('div');
+                const isLastGroup = index === breakdown.length - 1;
+                row.className = `digit-row digit-${group.digitsPerPage}${isLastGroup ? ' last-group' : ''}`;
+
+                const label = document.createElement('div');
+                label.className = 'row-label';
+                label.innerHTML = `<strong>Trang ${group.start}-${group.end}</strong><br><small>${group.digitsPerPage} chữ số/trang</small>`;
+
+                const pagesContainer = document.createElement('div');
+                pagesContainer.className = 'pages-container';
+
+                // Show sample pages (not all, to avoid performance issues)
+                const samplesToShow = Math.min(group.pages, 40);
+                const step = Math.max(1, Math.floor(group.pages / samplesToShow));
+
+                for (let i = 0; i < samplesToShow; i++) {
+                    const pageNum = group.start + i * step;
+                    if (pageNum > group.end) break;
+
+                    const pageBlock = document.createElement('div');
+                    pageBlock.className = `page-block digit-${group.digitsPerPage}`;
+                    pageBlock.textContent = pageNum;
+                    pageBlock.title = `Trang ${pageNum}: ${group.digitsPerPage} chữ số`;
+                    pagesContainer.appendChild(pageBlock);
+                }
+
+                if (group.pages > samplesToShow) {
+                    const ellipsis = document.createElement('span');
+                    ellipsis.style.cssText = 'color: #999; font-size: 14px; padding: 5px 10px; background: #fff; border-radius: 4px;';
+                    ellipsis.textContent = `... +${(group.pages - samplesToShow).toLocaleString()} trang`;
+                    pagesContainer.appendChild(ellipsis);
+                }
+
+                const stats = document.createElement('div');
+                stats.className = 'row-stats';
+                stats.innerHTML = `
+                    <strong>${group.pages.toLocaleString()}</strong> trang<br>
+                    × <strong>${group.digitsPerPage}</strong> chữ số<br>
+                    = <strong style="color: #2196F3;">${group.totalDigits.toLocaleString()}</strong> chữ số
+                `;
+
+                row.appendChild(label);
+                row.appendChild(pagesContainer);
+                row.appendChild(stats);
+                container.appendChild(row);
+
+                // Add to table
+                const percent = ((group.totalDigits / grandTotalDigits) * 100).toFixed(1);
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="text-align: left; padding-left: 20px;">
+                        <span style="display: inline-block; width: 12px; height: 12px; background: ${getColorForDigit(group.digitsPerPage)}; border-radius: 2px; margin-right: 8px;"></span>
+                        ${group.start.toLocaleString()} - ${group.end.toLocaleString()}
+                    </td>
+                    <td>${group.pages.toLocaleString()}</td>
+                    <td>${group.digitsPerPage}</td>
+                    <td>${group.totalDigits.toLocaleString()}</td>
+                    <td>${percent}%</td>
+                `;
+                tableBody.appendChild(tr);
+            });
+
+            // Add total row
+            const totalTr = document.createElement('tr');
+            totalTr.innerHTML = `
+                <td style="text-align: left; padding-left: 20px;"><strong>TỔNG CỘNG</strong></td>
+                <td><strong>${grandTotalPages.toLocaleString()}</strong></td>
+                <td><strong>TB: ${(grandTotalDigits / grandTotalPages).toFixed(2)}</strong></td>
+                <td><strong>${grandTotalDigits.toLocaleString()}</strong></td>
+                <td><strong>100%</strong></td>
+            `;
+            tableBody.appendChild(totalTr);
+        }
+
+        function getColorForDigit(d) {
+            const colors = { 1: '#FF5722', 2: '#FF9800', 3: '#4CAF50', 4: '#2196F3' };
+            return colors[d] || '#9E9E9E';
+        }
+
+        let sandBars = [];
+        let isLeveled = false;
+
+        function setupSandVisualization(breakdown, n, totalDigits) {
+            const container = document.getElementById('sand-chart');
+            container.innerHTML = '';
+            sandBars = [];
+            isLeveled = false;
+
+            // Calculate average for display
+            const avg = totalDigits / n;
+
+            // Determine max digits for scaling (use 4 as minimum for consistent display)
+            const maxDigits = Math.max(4, ...breakdown.map(g => g.digitsPerPage));
+
+            // For small page counts (< 50), show every page
+            // For larger counts, use proportional sampling
+            const showAllPages = n <= 50;
+            const totalBars = showAllPages ? n : 300;
+
+            breakdown.forEach((group, groupIndex) => {
+                const isLastGroup = groupIndex === breakdown.length - 1;
+                let pagesToShow = [];
+
+                if (showAllPages) {
+                    // Show every page in this group
+                    for (let page = group.start; page <= group.end; page++) {
+                        pagesToShow.push(page);
+                    }
+                } else {
+                    // Proportional sampling
+                    const proportion = group.pages / n;
+                    const barsForGroup = Math.max(3, Math.round(proportion * totalBars));
+                    const step = Math.max(1, Math.floor(group.pages / barsForGroup));
+
+                    for (let i = 0; i < barsForGroup && (group.start + i * step) <= group.end; i++) {
+                        pagesToShow.push(group.start + i * step);
+                    }
+                }
+
+                pagesToShow.forEach(page => {
+                    const fillHeightPercent = (group.digitsPerPage / maxDigits) * 100;
+
+                    const bar = document.createElement('div');
+                    bar.className = `sand-bar digit-${group.digitsPerPage}${isLastGroup ? ' last-group' : ''}`;
+                    bar.dataset.originalHeight = group.digitsPerPage;
+                    bar.dataset.originalFillPercent = fillHeightPercent;
+                    bar.dataset.maxDigits = maxDigits;
+                    bar.dataset.page = page;
+                    // All bars have full height container
+                    bar.style.height = '100%';
+
+                    // For small page counts, show page number
+                    if (showAllPages) {
+                        bar.title = `Trang ${page}: ${group.digitsPerPage} chữ số`;
+                        bar.style.minWidth = '20px';
+                    } else {
+                        bar.title = `Trang ${page}: ${group.digitsPerPage} chữ số`;
+                    }
+
+                    // Placeholder (viền nét đứt giữ chỗ ban đầu)
+                    const placeholder = document.createElement('div');
+                    placeholder.className = 'placeholder';
+                    placeholder.style.height = `${fillHeightPercent}%`;
+
+                    // Fill (phần cát thực sự)
+                    const fill = document.createElement('div');
+                    fill.className = 'fill';
+                    fill.style.height = `${fillHeightPercent}%`;
+
+                    // Add page number label for small counts
+                    if (showAllPages && n <= 20) {
+                        const label = document.createElement('span');
+                        label.className = 'bar-label';
+                        label.textContent = page;
+                        bar.appendChild(label);
+                    }
+
+                    bar.appendChild(placeholder);
+                    bar.appendChild(fill);
+                    container.appendChild(bar);
+                    sandBars.push(bar);
+                });
+            });
+
+            // Update legend dynamically
+            const legendContainer = document.getElementById('sand-legend');
+            legendContainer.innerHTML = '';
+            const barCounts = {};
+            sandBars.forEach(bar => {
+                const d = parseInt(bar.dataset.originalHeight);
+                barCounts[d] = (barCounts[d] || 0) + 1;
+            });
+
+            breakdown.forEach((group, index) => {
+                const isLastGroup = index === breakdown.length - 1;
+                const legendItem = document.createElement('div');
+                legendItem.className = 'legend-group';
+                legendItem.innerHTML = `
+                    <span class="legend-box ${isLastGroup ? 'last-group' : 'digit-' + group.digitsPerPage}"></span>
+                    Trang ${group.start.toLocaleString()}-${group.end.toLocaleString()} (${group.digitsPerPage} chữ số) - <strong>${barCounts[group.digitsPerPage] || 0} cột</strong>
+                `;
+                legendContainer.appendChild(legendItem);
+            });
+
+            // Update Y-axis labels dynamically
+            const yAxis = document.querySelector('.y-axis');
+            yAxis.innerHTML = '';
+            for (let i = maxDigits; i >= 0; i--) {
+                const span = document.createElement('span');
+                span.textContent = i;
+                yAxis.appendChild(span);
+            }
+
+            // Update stats
+            document.getElementById('sand-stats').innerHTML =
+                `<strong>${n.toLocaleString()}</strong> trang | ` +
+                `Tổng: <strong>${totalDigits.toLocaleString()}</strong> chữ số | ` +
+                `Trung bình: <strong>${avg.toFixed(2)}</strong> chữ số/trang`;
+
+            // Hide average line initially
+            document.getElementById('average-line').style.display = 'none';
+            document.getElementById('sand-title').textContent = 'Trước khi san: Mỗi trang có số chữ số khác nhau';
+
+            // Update average line position based on actual average
+            const avgLine = document.getElementById('average-line');
+            const avgPercent = (avg / maxDigits) * 100;
+            avgLine.style.bottom = `${avgPercent}%`;
+            avgLine.querySelector('.average-label').textContent = `TB = ${avg.toFixed(2)}`;
+
+            // Store maxDigits for animation
+            container.dataset.maxDigits = maxDigits;
+        }
+
+        let animationRunning = false;
+
+        function animateSand() {
+            if (animationRunning) return;
+
+            if (isLeveled) {
+                resetAnimation();
+                return;
+            }
+
+            animationRunning = true;
+            const avg = currentTotalDigits / currentN;
+            const maxDigits = parseInt(document.getElementById('sand-chart').dataset.maxDigits) || 4;
+            const avgHeightPercent = (avg / maxDigits) * 100;
+
+            // Show average line
+            document.getElementById('average-line').style.display = 'block';
+
+            // Categorize bars by their relationship to average
+            const avgDigitLevel = Math.round(avg);
+            const barsAboveAvg = sandBars.filter(bar => parseInt(bar.dataset.originalHeight) > avgDigitLevel);
+            const barsBelowAvg = sandBars.filter(bar => parseInt(bar.dataset.originalHeight) < avgDigitLevel);
+            const barsAtAvg = sandBars.filter(bar => parseInt(bar.dataset.originalHeight) === avgDigitLevel);
+
+            // Show all placeholders
+            sandBars.forEach(bar => bar.classList.add('show-placeholder'));
+
+            // Phase 1: Highlight bars above average (will go DOWN)
+            document.getElementById('sand-title').innerHTML =
+                `Bước 1: Cột <strong>>${avgDigitLevel} chữ số</strong> cao hơn TB → SAN XUỐNG`;
+
+            barsAboveAvg.forEach(bar => {
+                bar.style.boxShadow = '0 0 15px #2196F3';
+            });
+
+            // Phase 2: Lower bars above average
+            setTimeout(() => {
+                document.getElementById('sand-title').innerHTML =
+                    `Bước 2: Lấy cát từ cột >${avgDigitLevel} chữ số...`;
+
+                barsAboveAvg.forEach((bar, i) => {
+                    setTimeout(() => {
+                        const fill = bar.querySelector('.fill');
+                        fill.style.height = `${avgHeightPercent}%`;
+                        bar.style.boxShadow = 'none';
+                    }, i * 10);
+                });
+            }, 1200);
+
+            // Phase 3: Raise bars below average
+            setTimeout(() => {
+                document.getElementById('sand-title').innerHTML =
+                    `Bước 3: Đổ cát vào cột <${avgDigitLevel} chữ số...`;
+
+                barsBelowAvg.forEach(bar => {
+                    bar.style.boxShadow = '0 0 15px #FF5722';
+                });
+
+                setTimeout(() => {
+                    barsBelowAvg.forEach((bar, i) => {
+                        setTimeout(() => {
+                            const fill = bar.querySelector('.fill');
+                            fill.style.height = `${avgHeightPercent}%`;
+                            bar.style.boxShadow = 'none';
+                        }, i * 15);
+                    });
+                }, 300);
+            }, 1200 + barsAboveAvg.length * 10 + 500);
+
+            // Phase 4: Bars at average stay (highlight briefly)
+            setTimeout(() => {
+                document.getElementById('sand-title').innerHTML =
+                    `Bước 4: Cột ${avgDigitLevel} chữ số đã bằng TB → giữ nguyên`;
+
+                barsAtAvg.forEach(bar => {
+                    bar.style.boxShadow = '0 0 10px #4CAF50';
+                    setTimeout(() => {
+                        bar.style.boxShadow = 'none';
+                    }, 600);
+                });
+            }, 1200 + barsAboveAvg.length * 10 + 500 + barsBelowAvg.length * 15 + 500);
+
+            // Final
+            const totalTime = 1200 + barsAboveAvg.length * 10 + 500 + barsBelowAvg.length * 15 + 500 + 1000;
+            setTimeout(() => {
+                isLeveled = true;
+                animationRunning = false;
+                document.getElementById('sand-title').innerHTML =
+                    `<span style="color: #4CAF50;">✓ San xong!</span> Nét đứt = ban đầu | Tô màu = sau san | TB = <strong style="color: #E91E63;">${avg.toFixed(2)}</strong>`;
+                document.getElementById('sand-stats').innerHTML =
+                    `↓ San xuống: ${barsAboveAvg.length} cột | ` +
+                    `↑ San lên: ${barsBelowAvg.length} cột | ` +
+                    `= Giữ nguyên: ${barsAtAvg.length} cột`;
+            }, totalTime);
+        }
+
+        function resetAnimation() {
+            animationRunning = false;
+            isLeveled = false;
+
+            // Reset bars: hide placeholders, reset fills to original height
+            sandBars.forEach((bar, index) => {
+                bar.classList.remove('show-placeholder');
+                bar.style.boxShadow = 'none';
+                const fill = bar.querySelector('.fill');
+                if (fill) {
+                    const originalFillPercent = bar.dataset.originalFillPercent;
+                    fill.style.height = `${originalFillPercent}%`;
+                }
+            });
+
+            // Hide average line
+            document.getElementById('average-line').style.display = 'none';
+            document.getElementById('sand-title').textContent = 'Trước khi san: Mỗi trang có số chữ số khác nhau';
+
+            const avg = currentTotalDigits / currentN;
+            document.getElementById('sand-stats').innerHTML =
+                `<strong>${currentN.toLocaleString()}</strong> trang | ` +
+                `Tổng: <strong>${currentTotalDigits.toLocaleString()}</strong> chữ số | ` +
+                `Trung bình: <strong>${avg.toFixed(2)}</strong> chữ số/trang`;
+        }
+
+        function generateExplanation(breakdown, n, totalDigits, avgDigits) {
+            const container = document.getElementById('steps');
+            container.innerHTML = '';
+
+            let steps = [];
+
+            // Step 1: Understand the problem
+            steps.push({
+                title: 'Bước 1: Phân tích bài toán',
+                content: `
+                    <p>Gọi số trang của quyển sách là <strong>n</strong>.</p>
+                    <p>Trung bình mỗi trang dùng <strong>${avgDigits} chữ số</strong> nghĩa là:</p>
+                    <div class="formula">Tổng chữ số ÷ n = ${avgDigits}</div>
+                    <p>Hay: <strong>Tổng chữ số = ${avgDigits} × n</strong></p>
+                `
+            });
+
+            // Step 2: Count digits by group
+            let step2Content = '<p>Đếm số chữ số theo từng nhóm trang:</p>';
+            step2Content += '<ul>';
+            step2Content += `<li><span class="highlight" style="background: #FFCCBC;">Trang 1-9:</span> 9 trang × 1 chữ số = <strong>9</strong> chữ số</li>`;
+            step2Content += `<li><span class="highlight" style="background: #FFE0B2;">Trang 10-99:</span> 90 trang × 2 chữ số = <strong>180</strong> chữ số</li>`;
+            step2Content += `<li><span class="highlight" style="background: #C8E6C9;">Trang 100-999:</span> 900 trang × 3 chữ số = <strong>2700</strong> chữ số</li>`;
+            step2Content += `<li><span class="highlight" style="background: #BBDEFB;">Trang 1000-...:</span> Mỗi trang dùng 4 chữ số</li>`;
+            step2Content += '</ul>';
+
+            steps.push({
+                title: 'Bước 2: Đếm chữ số theo nhóm',
+                content: step2Content
+            });
+
+            // Step 3: Set up equation
+            const hasPage1000Plus = breakdown.some(g => g.start >= 1000);
+
+            if (hasPage1000Plus && avgDigits === 3) {
+                steps.push({
+                    title: 'Bước 3: Thiết lập phương trình',
+                    content: `
+                        <p>Giả sử quyển sách có n trang (với n ≥ 1000):</p>
+                        <div class="formula">
+                            Tổng chữ số = 9 + 180 + 2700 + 4 × (n - 999)<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= 9 + 180 + 2700 + 4n - 3996<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= <strong>4n - 1107</strong>
+                        </div>
+                        <p>Theo đề bài, trung bình = 3:</p>
+                        <div class="formula">
+                            (4n - 1107) ÷ n = 3<br>
+                            4n - 1107 = 3n<br>
+                            4n - 3n = 1107<br>
+                            <strong>n = 1107</strong>
+                        </div>
+                    `
+                });
+            } else {
+                steps.push({
+                    title: 'Bước 3: Tìm nghiệm',
+                    content: `
+                        <p>Ta cần tìm n sao cho:</p>
+                        <div class="formula">Tổng chữ số(n) ÷ n = ${avgDigits}</div>
+                        <p>Bằng cách thử các giá trị, ta tìm được n = <strong>${n}</strong></p>
+                    `
+                });
+            }
+
+            // Step 4: Verify
+            let verifyList = breakdown.map(g =>
+                `<li>Trang ${g.start.toLocaleString()}-${g.end.toLocaleString()}: ${g.pages.toLocaleString()} × ${g.digitsPerPage} = <strong>${g.totalDigits.toLocaleString()}</strong> chữ số</li>`
+            ).join('');
+
+            steps.push({
+                title: 'Bước 4: Kiểm tra kết quả',
+                content: `
+                    <p>Với n = <strong>${n.toLocaleString()}</strong> trang:</p>
+                    <ul>${verifyList}</ul>
+                    <div class="formula">
+                        Tổng = ${totalDigits.toLocaleString()} chữ số<br><br>
+                        Trung bình = ${totalDigits.toLocaleString()} ÷ ${n.toLocaleString()} = <strong style="color: #4CAF50; font-size: 18px;">${(totalDigits/n).toFixed(6)}</strong> chữ số/trang ✓
+                    </div>
+                `
+            });
+
+            // Render steps
+            steps.forEach((step, index) => {
+                const stepDiv = document.createElement('div');
+                stepDiv.className = 'step';
+                stepDiv.innerHTML = `
+                    <div class="step-title">${step.title}</div>
+                    ${step.content}
+                `;
+                stepDiv.onclick = () => {
+                    document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+                    stepDiv.classList.add('active');
+                };
+                container.appendChild(stepDiv);
+            });
+        }
+
+        // Initialize
+        calculate();
+    </script>
+</body>
+</html>
