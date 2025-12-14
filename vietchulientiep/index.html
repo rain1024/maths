@@ -1,0 +1,1430 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài Toán Viết Chữ Liên Tiếp - Tô Màu Theo Chu Kỳ</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        h1 {
+            color: white;
+            text-align: center;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            color: rgba(255,255,255,0.9);
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 1.1em;
+        }
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        .card h2 {
+            color: #333;
+            margin-top: 0;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+        .card h3 {
+            color: #555;
+            margin-top: 20px;
+        }
+        .problem p {
+            line-height: 1.8;
+            color: #444;
+        }
+        .input-group {
+            margin: 15px 0;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        label {
+            font-weight: 600;
+            color: #333;
+            min-width: 180px;
+        }
+        input[type="number"] {
+            padding: 12px 15px;
+            width: 100px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        button {
+            padding: 12px 25px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        button.secondary {
+            background: #6c757d;
+            padding: 8px 15px;
+            font-size: 14px;
+        }
+        button.secondary:hover {
+            background: #5a6268;
+        }
+
+        /* Color Palette Selection */
+        .color-palette {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        .palette-color {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            cursor: pointer;
+            border: 3px solid transparent;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+        .palette-color:hover {
+            transform: scale(1.1);
+        }
+        .palette-color.selected {
+            border-color: #333;
+            box-shadow: 0 0 10px rgba(0,0,0,0.3);
+        }
+        .palette-color.disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        /* Selected Colors Order */
+        .selected-colors {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 15px 0;
+            min-height: 50px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 2px dashed #ddd;
+        }
+        .selected-color-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 8px 12px;
+            border-radius: 20px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .selected-color-item:hover {
+            transform: scale(1.05);
+        }
+        .selected-color-item .order {
+            background: rgba(255,255,255,0.3);
+            border-radius: 50%;
+            width: 22px;
+            height: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+        .selected-color-item .remove {
+            margin-left: 5px;
+            opacity: 0.7;
+        }
+        .selected-color-item .remove:hover {
+            opacity: 1;
+        }
+
+        /* Answer Box */
+        .answer-box {
+            text-align: center;
+            padding: 30px;
+            margin: 20px 0;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        }
+        .answer-number {
+            font-size: 3em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .answer-text {
+            font-size: 1.5em;
+            color: #333;
+        }
+        .answer-color {
+            font-weight: bold;
+        }
+
+        /* Explanation */
+        .explanation {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        .explanation h3 {
+            margin-top: 0;
+            color: #667eea;
+        }
+        .formula {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            border-left: 4px solid #667eea;
+            font-family: 'Courier New', monospace;
+            font-size: 1.1em;
+        }
+
+        /* Reasoning Section */
+        .reasoning {
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            border-left: 4px solid #4caf50;
+        }
+        .reasoning h3 {
+            margin-top: 0;
+            color: #2e7d32;
+        }
+        .reasoning-step {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+        .reasoning-step strong {
+            color: #667eea;
+        }
+        .cycle-info {
+            background: #fff3e0;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #ff9800;
+        }
+        .lcm-highlight {
+            background: #ffeb3b;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        /* Stats */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .stat-box {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .stat-box .number {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #667eea;
+        }
+        .stat-box .label {
+            color: #666;
+            font-size: 0.85em;
+        }
+
+        /* Visualization */
+        .chars-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            max-height: 400px;
+            overflow-y: auto;
+            line-height: 1.8;
+        }
+        .char {
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 18px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: default;
+            position: relative;
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+            min-width: 40px;
+            text-align: center;
+        }
+        .char.space {
+            background: transparent !important;
+            min-width: 20px;
+            box-shadow: none !important;
+        }
+        .char:not(.space):hover {
+            transform: scale(1.15);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            z-index: 10;
+        }
+        .char.highlight {
+            animation: pulse 1s ease-in-out infinite;
+            box-shadow: 0 0 25px currentColor;
+            transform: scale(1.2);
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1.2); }
+            50% { transform: scale(1.35); }
+        }
+        .char-number {
+            position: absolute;
+            top: -12px;
+            right: -10px;
+            background: #333;
+            color: white;
+            font-size: 9px;
+            padding: 2px 5px;
+            border-radius: 8px;
+            opacity: 0;
+            transition: opacity 0.2s;
+            text-shadow: none;
+            white-space: nowrap;
+        }
+        .char:hover .char-number,
+        .char.highlight .char-number {
+            opacity: 1;
+        }
+
+        /* Cycle Display */
+        .cycle-display {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        .cycle-item {
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-weight: bold;
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+        .arrow {
+            color: #667eea;
+            font-size: 1.5em;
+        }
+
+        /* Word cycle visualization */
+        .word-cycle-box {
+            background: #e3f2fd;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        .word-cycle-display {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            justify-content: center;
+            margin: 15px 0;
+        }
+        .word-char {
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-weight: bold;
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+
+        .tip {
+            background: #fff8e1;
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #ffc107;
+            font-size: 0.95em;
+        }
+
+        /* Mode Toggle */
+        .mode-toggle {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        .mode-option {
+            flex: 1;
+            padding: 15px 20px;
+            border: 3px solid #ddd;
+            border-radius: 10px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s;
+            background: #f8f9fa;
+        }
+        .mode-option:hover {
+            border-color: #667eea;
+            background: #f0f0ff;
+        }
+        .mode-option.active {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #667eea20 0%, #764ba220 100%);
+            box-shadow: 0 0 10px rgba(102, 126, 234, 0.3);
+        }
+        .mode-option .mode-title {
+            font-weight: bold;
+            font-size: 1.1em;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        .mode-option .mode-desc {
+            font-size: 0.85em;
+            color: #666;
+        }
+        .mode-option .mode-example {
+            margin-top: 10px;
+            padding: 8px;
+            background: white;
+            border-radius: 5px;
+            font-size: 0.9em;
+        }
+
+        /* Word styling for word mode */
+        .word-block {
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 16px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: default;
+            position: relative;
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+            display: inline-block;
+            margin: 2px;
+        }
+        .word-block:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            z-index: 10;
+        }
+        .word-block.highlight {
+            animation: pulse 1s ease-in-out infinite;
+            box-shadow: 0 0 25px currentColor;
+            transform: scale(1.1);
+        }
+        .word-number {
+            position: absolute;
+            top: -10px;
+            right: -8px;
+            background: #333;
+            color: white;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 10px;
+            opacity: 0;
+            transition: opacity 0.2s;
+            text-shadow: none;
+        }
+        .word-block:hover .word-number,
+        .word-block.highlight .word-number {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <h1>Bài Toán Viết Chữ Liên Tiếp</h1>
+    <p class="subtitle">Tô màu từng chữ theo chu kỳ - Bài toán chia hết & BCNN</p>
+
+    <div class="card problem">
+        <h2>Đề Bài</h2>
+        <p>
+            Viết cụm <strong id="displayPhrase">"HỌC SINH GIỎI"</strong> liên tiếp nhiều lần:
+            <em id="displayPhraseRepeat">HỌC SINH GIỎI HỌC SINH GIỎI HỌC SINH GIỎI ...</em>
+        </p>
+        <p>
+            Đánh màu <strong>từng chữ</strong> (không tính dấu cách) lần lượt theo k màu đã chọn, rồi lặp lại.
+        </p>
+        <p style="background: #e3f2fd; padding: 10px; border-radius: 5px; margin: 10px 0;" id="phraseInfo">
+            <strong>Phân biệt:</strong><br>
+            • <strong>Chữ (letter)</strong>: <span id="letterList">H, Ọ, C, S, I, N, H, G, I, Ỏ, I</span> → Tổng <strong id="letterCount">11</strong> chữ<br>
+            • <strong>Tiếng (word)</strong>: <span id="wordList">HỌC, SINH, GIỎI</span> → Tổng <strong id="wordCount">3</strong> tiếng
+        </p>
+        <p><strong>Hỏi:</strong> Chữ/Tiếng thứ n có màu gì? Chu kỳ màu lặp lại như thế nào?</p>
+    </div>
+
+    <div class="card">
+        <h2>Nhập Cụm Từ</h2>
+        <div class="input-group">
+            <label for="phraseInput">Cụm từ (các tiếng cách nhau bởi dấu cách):</label>
+            <input type="text" id="phraseInput" value="HỌC SINH GIỎI" style="width: 300px; padding: 12px 15px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px;">
+            <button onclick="updatePhrase()">Cập nhật</button>
+        </div>
+        <p style="color: #666; font-size: 0.9em; margin-top: 10px;">
+            Ví dụ: "HỌC SINH GIỎI", "TOÁN HỌC VUI", "CHĂM CHỈ HỌC TẬP"
+        </p>
+    </div>
+
+    <div class="card">
+        <h2>Chế Độ Tô Màu</h2>
+        <div class="mode-toggle">
+            <div class="mode-option active" id="modeWord" onclick="setMode('word')">
+                <div class="mode-title">Tô màu theo TIẾNG</div>
+                <div class="mode-desc">Mỗi tiếng (word) được tô 1 màu</div>
+                <div class="mode-example" id="modeWordExample">
+                    <!-- Will be generated dynamically -->
+                </div>
+            </div>
+            <div class="mode-option" id="modeLetter" onclick="setMode('letter')">
+                <div class="mode-title">Tô màu theo CHỮ</div>
+                <div class="mode-desc">Mỗi chữ (letter) được tô 1 màu riêng</div>
+                <div class="mode-example" id="modeLetterExample">
+                    <!-- Will be generated dynamically -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Cài Đặt Màu Sắc</h2>
+
+        <h3>Số lượng màu sử dụng:</h3>
+        <div class="input-group">
+            <label for="colorCount">Chọn k màu (2-10):</label>
+            <input type="number" id="colorCount" value="4" min="2" max="10">
+            <button class="secondary" onclick="resetColors()">Đặt lại</button>
+        </div>
+
+        <h3>Chọn màu theo thứ tự (click để chọn/bỏ chọn):</h3>
+        <div class="color-palette" id="colorPalette">
+            <!-- Colors will be generated here -->
+        </div>
+
+        <h3>Thứ tự màu đã chọn: <span id="selectedCount">(0/4)</span></h3>
+        <div class="selected-colors" id="selectedColors">
+            <span style="color: #999;">Click vào màu ở trên để thêm vào danh sách...</span>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Tìm Màu</h2>
+        <div class="input-group" style="margin-bottom: 15px;">
+            <label style="min-width: auto;">Tìm theo:</label>
+            <label style="min-width: auto; display: flex; align-items: center; gap: 5px; cursor: pointer;">
+                <input type="radio" name="searchType" value="word" checked onchange="updateSearchType()"> Tiếng
+            </label>
+            <label style="min-width: auto; display: flex; align-items: center; gap: 5px; cursor: pointer;">
+                <input type="radio" name="searchType" value="letter" onchange="updateSearchType()"> Chữ
+            </label>
+        </div>
+        <div class="input-group">
+            <label for="charNumber" id="findLabel">Tìm màu của tiếng thứ:</label>
+            <input type="number" id="charNumber" value="185" min="1" max="1000">
+            <button onclick="calculate()">Tính Toán</button>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Kết Quả</h2>
+        <div class="answer-box">
+            <div class="answer-number" id="answerNumber">185</div>
+            <div class="answer-text" id="answerText">
+                Tiếng thứ <span id="charNum">185</span> có màu:
+                <span class="answer-color" id="answerColor">ĐỎ</span>
+            </div>
+            <div id="charContent" style="margin-top: 10px; font-size: 1.2em;">
+                Đó là tiếng: <strong id="theChar">?</strong>
+            </div>
+            <div id="charContentExtra" style="margin-top: 5px; font-size: 1em; color: #666; display: none;">
+                (thuộc tiếng: <strong id="theWord">?</strong>)
+            </div>
+        </div>
+
+        <div class="explanation">
+            <h3>Cách Tính</h3>
+            <p>Màu lặp lại theo chu kỳ <strong id="cycleLength">4</strong> màu.</p>
+            <p>Để tìm màu của chữ thứ n, ta tính số dư của n khi chia cho k (số màu):</p>
+            <div class="formula" id="formulaDisplay">
+                185 ÷ 4 = 46 dư <strong>1</strong><br>
+                Số dư = 1 → Màu thứ 1
+            </div>
+        </div>
+
+        <div class="stats">
+            <div class="stat-box">
+                <div class="number" id="totalCycles">46</div>
+                <div class="label">Chu kỳ màu hoàn chỉnh</div>
+            </div>
+            <div class="stat-box">
+                <div class="number" id="remainder">1</div>
+                <div class="label">Số dư (vị trí màu)</div>
+            </div>
+            <div class="stat-box">
+                <div class="number" id="wordPosition">?</div>
+                <div class="label">Thuộc tiếng thứ</div>
+            </div>
+            <div class="stat-box">
+                <div class="number" id="charInWord">?</div>
+                <div class="label">Chữ thứ mấy trong tiếng</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card" id="reasoningCard">
+        <h2 id="reasoningTitle">Lập Luận: Tìm Màu Của Tiếng Thứ n</h2>
+
+        <div class="reasoning">
+            <h3 id="reasoningQuestion">Làm thế nào để tìm màu của tiếng thứ n?</h3>
+
+            <div class="reasoning-step" id="reasoningStep1">
+                <strong>Bước 1: Hiểu quy luật tô màu</strong>
+                <p>Các <span id="unitNameStep1">tiếng</span> được tô màu lần lượt theo <strong id="numColors">4</strong> màu đã chọn, rồi lặp lại:</p>
+                <p id="colorCycleExample">• Tiếng 1 → Màu 1, Tiếng 2 → Màu 2, ..., Tiếng k → Màu k<br>
+                   • Tiếng k+1 → Màu 1, Tiếng k+2 → Màu 2, ... (lặp lại)</p>
+            </div>
+
+            <div class="reasoning-step">
+                <strong>Bước 2: Áp dụng phép chia có dư</strong>
+                <p>Để tìm màu của <span id="unitNameStep2">tiếng</span> thứ <strong>n</strong>, ta thực hiện phép chia:</p>
+                <div class="formula">
+                    n ÷ k = q dư r
+                </div>
+                <p>Trong đó: <strong>k</strong> = số màu, <strong>q</strong> = thương, <strong>r</strong> = số dư</p>
+            </div>
+
+            <div class="cycle-info">
+                <strong>Quy tắc xác định màu:</strong>
+                <br><br>
+                • Nếu <strong>r ≠ 0</strong>: <span id="unitNameRule">Tiếng</span> thứ n có màu thứ <strong>r</strong>
+                <br>
+                • Nếu <strong>r = 0</strong>: <span id="unitNameRule2">Tiếng</span> thứ n có màu thứ <strong>k</strong> (màu cuối cùng)
+                <br><br>
+                <em>Công thức tổng quát: Màu = ((n - 1) mod k) + 1</em>
+            </div>
+
+            <div class="reasoning-step">
+                <strong>Bước 3: Minh họa chu kỳ màu</strong>
+                <p style="margin-bottom: 10px;">Sau mỗi <span class="lcm-highlight" id="repeatCycle">4</span> lần viết "HỌC SINH GIỎI" (<span id="totalCharsInCycle">12 tiếng</span>), màu của các <span id="unitNameStep3">tiếng</span> lặp lại y hệt:</p>
+                <div id="wordCycleVisualization">
+                    <!-- Will be generated -->
+                </div>
+            </div>
+        </div>
+
+        <div class="tip" id="exampleTip">
+            <strong>Ví dụ:</strong> Với k = 4 màu, tìm màu của tiếng thứ 185:
+            <br>185 ÷ 4 = 46 dư <strong>1</strong> → Tiếng 185 có màu thứ <strong>1</strong>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Minh Họa Trực Quan</h2>
+        <p style="color: #666; margin-bottom: 15px;">
+            Di chuột vào từng chữ để xem số thứ tự. Chữ được hỏi sẽ được đánh dấu nổi bật.
+        </p>
+
+        <h3>Chu kỳ màu hiện tại:</h3>
+        <div class="cycle-display" id="cycleDisplay">
+            <!-- Will be generated -->
+        </div>
+
+        <h3>Chuỗi các chữ được tô màu (mỗi chữ = 1 ô màu):</h3>
+        <div class="chars-container" id="charsContainer">
+            <!-- Characters will be generated here -->
+        </div>
+    </div>
+
+    <script>
+        // 10 basic colors
+        const allColors = [
+            { id: 'red', hex: '#e74c3c', name: 'Đỏ' },
+            { id: 'yellow', hex: '#f1c40f', name: 'Vàng' },
+            { id: 'orange', hex: '#e67e22', name: 'Cam' },
+            { id: 'green', hex: '#27ae60', name: 'Xanh lá' },
+            { id: 'blue', hex: '#3498db', name: 'Xanh dương' },
+            { id: 'purple', hex: '#9b59b6', name: 'Tím' },
+            { id: 'pink', hex: '#e91e63', name: 'Hồng' },
+            { id: 'teal', hex: '#00bcd4', name: 'Xanh ngọc' },
+            { id: 'brown', hex: '#795548', name: 'Nâu' },
+            { id: 'gray', hex: '#607d8b', name: 'Xám' }
+        ];
+
+        let selectedColors = [];
+        let currentMode = 'word'; // 'word' or 'letter' - for coloring
+        let searchType = 'word'; // 'word' or 'letter' - for searching
+        let phrase = "HỌC SINH GIỎI";
+        let words = ["HỌC", "SINH", "GIỎI"];
+        let charsOnly = phrase.replace(/\s/g, ''); // 11 characters
+
+        function updatePhrase() {
+            const input = document.getElementById('phraseInput').value.trim().toUpperCase();
+            if (!input) {
+                alert('Vui lòng nhập cụm từ!');
+                return;
+            }
+
+            // Update phrase variables
+            phrase = input;
+            words = input.split(/\s+/).filter(w => w.length > 0);
+            charsOnly = phrase.replace(/\s/g, '');
+
+            if (words.length === 0 || charsOnly.length === 0) {
+                alert('Cụm từ không hợp lệ!');
+                return;
+            }
+
+            // Update display in problem statement
+            document.getElementById('displayPhrase').textContent = `"${phrase}"`;
+            document.getElementById('displayPhraseRepeat').textContent = `${phrase} ${phrase} ${phrase} ...`;
+            document.getElementById('letterList').textContent = charsOnly.split('').join(', ');
+            document.getElementById('letterCount').textContent = charsOnly.length;
+            document.getElementById('wordList').textContent = words.join(', ');
+            document.getElementById('wordCount').textContent = words.length;
+
+            // Recalculate with current colors (not reset)
+            updateAllDisplays();
+        }
+
+        function updateSearchType() {
+            const selected = document.querySelector('input[name="searchType"]:checked');
+            searchType = selected ? selected.value : 'word';
+
+            // Update label
+            if (searchType === 'word') {
+                document.getElementById('findLabel').textContent = 'Tìm màu của tiếng thứ:';
+            } else {
+                document.getElementById('findLabel').textContent = 'Tìm màu của chữ thứ:';
+            }
+
+            calculate();
+        }
+
+        function setMode(mode) {
+            currentMode = mode;
+
+            // Update UI
+            document.getElementById('modeWord').classList.toggle('active', mode === 'word');
+            document.getElementById('modeLetter').classList.toggle('active', mode === 'letter');
+
+            calculate();
+        }
+
+        function initColorPalette() {
+            const palette = document.getElementById('colorPalette');
+            palette.innerHTML = '';
+
+            allColors.forEach((color, index) => {
+                const div = document.createElement('div');
+                div.className = 'palette-color';
+                div.style.backgroundColor = color.hex;
+                div.textContent = index + 1;
+                div.dataset.colorId = color.id;
+                div.onclick = () => toggleColor(color);
+                palette.appendChild(div);
+            });
+        }
+
+        function toggleColor(color) {
+            const maxColors = parseInt(document.getElementById('colorCount').value) || 4;
+            const index = selectedColors.findIndex(c => c.id === color.id);
+
+            if (index >= 0) {
+                selectedColors.splice(index, 1);
+            } else if (selectedColors.length < maxColors) {
+                selectedColors.push(color);
+            }
+
+            updateAllDisplays();
+        }
+
+        function updateAllDisplays() {
+            updateColorDisplay();
+            updateCycleDisplay();
+            updateModeExamples();
+            // Call calculate to update reasoning and visualization
+            calculate();
+        }
+
+        function updateColorDisplay() {
+            const maxColors = parseInt(document.getElementById('colorCount').value) || 4;
+
+            document.querySelectorAll('.palette-color').forEach(el => {
+                const colorId = el.dataset.colorId;
+                const isSelected = selectedColors.some(c => c.id === colorId);
+                el.classList.toggle('selected', isSelected);
+                el.classList.toggle('disabled', !isSelected && selectedColors.length >= maxColors);
+            });
+
+            const container = document.getElementById('selectedColors');
+            document.getElementById('selectedCount').textContent = `(${selectedColors.length}/${maxColors})`;
+
+            if (selectedColors.length === 0) {
+                container.innerHTML = '<span style="color: #999;">Click vào màu ở trên để thêm vào danh sách...</span>';
+                return;
+            }
+
+            container.innerHTML = '';
+            selectedColors.forEach((color, index) => {
+                const item = document.createElement('div');
+                item.className = 'selected-color-item';
+                item.style.backgroundColor = color.hex;
+                item.innerHTML = `
+                    <span class="order">${index + 1}</span>
+                    <span>${color.name}</span>
+                    <span class="remove">✕</span>
+                `;
+                item.onclick = () => toggleColor(color);
+                container.appendChild(item);
+            });
+        }
+
+        function updateModeExamples() {
+            if (selectedColors.length === 0) return;
+
+            const wordExample = document.getElementById('modeWordExample');
+            const letterExample = document.getElementById('modeLetterExample');
+
+            // Build character array with word assignments from current phrase
+            const exampleChars = [];
+            const wordAssignments = [];
+            let wordNum = 0;
+            for (let i = 0; i < phrase.length; i++) {
+                const char = phrase[i];
+                if (char === ' ') {
+                    exampleChars.push(' ');
+                    wordAssignments.push(0);
+                } else {
+                    // Check if this is the start of a new word
+                    if (i === 0 || phrase[i - 1] === ' ') {
+                        wordNum++;
+                    }
+                    exampleChars.push(char);
+                    wordAssignments.push(wordNum);
+                }
+            }
+
+            // Word mode example: each word has same color
+            let wordHtml = '';
+            exampleChars.forEach((char, i) => {
+                if (char === ' ') {
+                    wordHtml += ' ';
+                } else {
+                    const colorIdx = (wordAssignments[i] - 1) % selectedColors.length;
+                    const color = selectedColors[colorIdx];
+                    const textColor = color.id === 'yellow' ? '#333' : 'white';
+                    wordHtml += `<span style="background:${color.hex};color:${textColor};padding:2px 4px;border-radius:3px;">${char}</span>`;
+                }
+            });
+            wordExample.innerHTML = wordHtml;
+
+            // Letter mode example: each letter has its own color
+            let letterHtml = '';
+            let letterIdx = 0;
+            exampleChars.forEach((char) => {
+                if (char === ' ') {
+                    letterHtml += ' ';
+                } else {
+                    const colorIdx = letterIdx % selectedColors.length;
+                    const color = selectedColors[colorIdx];
+                    const textColor = color.id === 'yellow' ? '#333' : 'white';
+                    letterHtml += `<span style="background:${color.hex};color:${textColor};padding:2px 4px;border-radius:3px;">${char}</span>`;
+                    letterIdx++;
+                }
+            });
+            letterExample.innerHTML = letterHtml;
+        }
+
+        function updateCycleDisplay() {
+            const container = document.getElementById('cycleDisplay');
+            container.innerHTML = '';
+
+            if (selectedColors.length === 0) {
+                container.innerHTML = '<span style="color: #999;">Chưa chọn màu</span>';
+                return;
+            }
+
+            selectedColors.forEach((color, index) => {
+                if (index > 0) {
+                    const arrow = document.createElement('span');
+                    arrow.className = 'arrow';
+                    arrow.textContent = '→';
+                    container.appendChild(arrow);
+                }
+
+                const item = document.createElement('div');
+                item.className = 'cycle-item';
+                item.style.backgroundColor = color.hex;
+                item.textContent = `${index + 1}. ${color.name}`;
+                container.appendChild(item);
+            });
+
+            const arrow = document.createElement('span');
+            arrow.className = 'arrow';
+            arrow.textContent = '→';
+            container.appendChild(arrow);
+
+            const repeat = document.createElement('span');
+            repeat.style.color = '#667eea';
+            repeat.style.fontWeight = 'bold';
+            repeat.textContent = '(lặp lại)';
+            container.appendChild(repeat);
+        }
+
+        function resetColors() {
+            const maxColors = parseInt(document.getElementById('colorCount').value) || 4;
+            selectedColors = allColors.slice(0, maxColors);
+            updateAllDisplays();
+        }
+
+        function gcd(a, b) {
+            return b === 0 ? a : gcd(b, a % b);
+        }
+
+        function lcm(a, b) {
+            return (a * b) / gcd(a, b);
+        }
+
+        // Get color based on position number (for both modes)
+        function getColorAtPosition(n) {
+            if (selectedColors.length === 0) return null;
+            const k = selectedColors.length;
+            const remainder = n % k;
+            const index = remainder === 0 ? k - 1 : remainder - 1;
+            return selectedColors[index];
+        }
+
+        // Get character at letter position
+        function getCharAtPosition(n) {
+            const len = charsOnly.length;
+            const remainder = n % len;
+            const index = remainder === 0 ? len - 1 : remainder - 1;
+            return charsOnly[index];
+        }
+
+        // Get word at word position
+        function getWordAtPosition(n) {
+            const wordCount = words.length;
+            const remainder = n % wordCount;
+            const index = remainder === 0 ? wordCount - 1 : remainder - 1;
+            return words[index];
+        }
+
+        // Get word number that contains letter at position n
+        function getWordNumForLetter(letterPos) {
+            const len = charsOnly.length;
+            const posInPhrase = ((letterPos - 1) % len);
+
+            let charCount = 0;
+            for (let i = 0; i < words.length; i++) {
+                charCount += words[i].length;
+                if (posInPhrase < charCount) {
+                    const phraseNum = Math.ceil(letterPos / len);
+                    return (phraseNum - 1) * words.length + i + 1;
+                }
+            }
+            return 1;
+        }
+
+        // Get color for a letter at position letterPos (always letter position)
+        // In word mode: color based on word number
+        // In letter mode: color based on letter number
+        function getColorForLetter(letterPos) {
+            if (currentMode === 'word') {
+                const wordNum = getWordNumForLetter(letterPos);
+                return getColorAtPosition(wordNum);
+            } else {
+                return getColorAtPosition(letterPos);
+            }
+        }
+
+        // Get detailed info about a letter position
+        function getWordInfo(letterPos) {
+            const len = charsOnly.length;
+            const posInPhrase = ((letterPos - 1) % len);
+
+            let charCount = 0;
+            for (let i = 0; i < words.length; i++) {
+                charCount += words[i].length;
+                if (posInPhrase < charCount) {
+                    const wordStart = charCount - words[i].length;
+                    const posInWord = posInPhrase - wordStart + 1;
+                    const phraseNum = Math.ceil(letterPos / len);
+                    const wordNum = (phraseNum - 1) * words.length + i + 1;
+                    return {
+                        word: words[i],
+                        wordIndex: i,
+                        wordNum: wordNum,
+                        posInWord: posInWord,
+                        phraseNum: phraseNum
+                    };
+                }
+            }
+            return null;
+        }
+
+        function calculate() {
+            // Capture current colors at the start of calculate
+            const currentColors = selectedColors.slice();
+
+            if (currentColors.length === 0) {
+                return;
+            }
+
+            const n = parseInt(document.getElementById('charNumber').value) || 185;
+            const k = currentColors.length;
+
+            if (n < 1 || n > 1000) {
+                alert('Vui lòng nhập số từ 1 đến 1000');
+                return;
+            }
+
+            // Helper function to get color at position from currentColors
+            function getColor(pos) {
+                const idx = pos % k === 0 ? k - 1 : (pos % k) - 1;
+                return currentColors[idx];
+            }
+
+            // Determine color based on searchType (what we're searching) and currentMode (how colors are assigned)
+            let color, colorPosition;
+
+            if (searchType === 'word') {
+                // Searching for word n
+                if (currentMode === 'word') {
+                    // Colors by word: word n has color position n
+                    colorPosition = n;
+                    color = getColor(n);
+                } else {
+                    // Colors by letter: find first letter position of word n
+                    const wordCount = words.length;
+                    const phraseNum = Math.ceil(n / wordCount);
+                    const wordIndexInPhrase = (n - 1) % wordCount;
+
+                    // Calculate first letter position of word n
+                    let lettersBeforeWord = 0;
+                    for (let i = 0; i < wordIndexInPhrase; i++) {
+                        lettersBeforeWord += words[i].length;
+                    }
+                    const firstLetterPos = (phraseNum - 1) * charsOnly.length + lettersBeforeWord + 1;
+                    colorPosition = firstLetterPos;
+                    color = getColor(firstLetterPos);
+                }
+            } else {
+                // Searching for letter n
+                if (currentMode === 'word') {
+                    // Colors by word: find which word letter n belongs to
+                    const wordNum = getWordNumForLetter(n);
+                    colorPosition = wordNum;
+                    color = getColor(wordNum);
+                } else {
+                    // Colors by letter: letter n has color position n
+                    colorPosition = n;
+                    color = getColor(n);
+                }
+            }
+
+            const remainder = colorPosition % k;
+            const displayRemainder = remainder === 0 ? k : remainder;
+            const cycles = Math.floor((colorPosition - 1) / k);
+
+            // Update answer display based on searchType
+            document.getElementById('answerNumber').textContent = n;
+            document.getElementById('answerNumber').style.color = color.hex;
+
+            const colorModeText = currentMode === 'word' ? 'tô màu theo tiếng' : 'tô màu theo chữ';
+
+            if (searchType === 'word') {
+                // Searching for word n
+                const word = getWordAtPosition(n);
+                document.getElementById('answerText').innerHTML = `Tiếng thứ <span id="charNum">${n}</span> có màu: <span class="answer-color" style="color: ${color.hex};">${color.name.toUpperCase()}</span>`;
+                document.getElementById('charContent').innerHTML = `Đó là tiếng: <strong style="color: ${color.hex};">${word}</strong>`;
+                document.getElementById('charContentExtra').style.display = 'block';
+                document.getElementById('charContentExtra').innerHTML = `(Chế độ: ${colorModeText})`;
+
+                // Update stats for word search
+                const wordCount = words.length;
+                const phraseNum = Math.ceil(n / wordCount);
+                const posInPhrase = n % wordCount === 0 ? wordCount : n % wordCount;
+                document.getElementById('wordPosition').textContent = phraseNum;
+                document.getElementById('charInWord').textContent = posInPhrase;
+                document.querySelector('#wordPosition').parentElement.querySelector('.label').textContent = 'Thuộc lần viết thứ';
+                document.querySelector('#charInWord').parentElement.querySelector('.label').textContent = 'Tiếng thứ mấy trong cụm';
+            } else {
+                // Searching for letter n
+                const char = getCharAtPosition(n);
+                const wordInfo = getWordInfo(n);
+                document.getElementById('answerText').innerHTML = `Chữ thứ <span id="charNum">${n}</span> có màu: <span class="answer-color" style="color: ${color.hex};">${color.name.toUpperCase()}</span>`;
+                document.getElementById('charContent').innerHTML = `Đó là chữ: <strong style="color: ${color.hex};">${char}</strong>`;
+                document.getElementById('charContentExtra').style.display = 'block';
+                document.getElementById('charContentExtra').innerHTML = `(thuộc tiếng: <strong style="color: ${color.hex};">${wordInfo ? wordInfo.word : '?'}</strong> | Chế độ: ${colorModeText})`;
+
+                // Update stats for letter search
+                document.getElementById('wordPosition').textContent = wordInfo ? wordInfo.wordNum : '?';
+                document.getElementById('charInWord').textContent = wordInfo ? wordInfo.posInWord : '?';
+                document.querySelector('#wordPosition').parentElement.querySelector('.label').textContent = 'Thuộc tiếng thứ';
+                document.querySelector('#charInWord').parentElement.querySelector('.label').textContent = 'Chữ thứ mấy trong tiếng';
+            }
+
+            // Update formula
+            const searchUnitName = searchType === 'word' ? 'tiếng' : 'chữ';
+            const colorUnitName = currentMode === 'word' ? 'tiếng' : 'chữ';
+            document.getElementById('cycleLength').textContent = k;
+
+            if (searchType === currentMode) {
+                document.getElementById('formulaDisplay').innerHTML = `
+                    ${n} ÷ ${k} = ${cycles} dư <strong>${displayRemainder}</strong><br>
+                    Số dư = ${displayRemainder} → Màu thứ ${displayRemainder} = <strong style="color: ${color.hex};">${color.name.toUpperCase()}</strong>
+                `;
+            } else {
+                document.getElementById('formulaDisplay').innerHTML = `
+                    ${searchUnitName.charAt(0).toUpperCase() + searchUnitName.slice(1)} ${n} → Vị trí ${colorUnitName}: ${colorPosition}<br>
+                    ${colorPosition} ÷ ${k} = ${cycles} dư <strong>${displayRemainder}</strong><br>
+                    Số dư = ${displayRemainder} → Màu thứ ${displayRemainder} = <strong style="color: ${color.hex};">${color.name.toUpperCase()}</strong>
+                `;
+            }
+
+            // Update stats
+            document.getElementById('totalCycles').textContent = cycles;
+            document.getElementById('remainder').textContent = displayRemainder;
+
+            // Update reasoning section - pass currentColors and n
+            updateReasoning(k, currentColors, n);
+
+            // Always generate visualization by letters - pass currentColors
+            generateLetterVisualization(n, currentColors);
+        }
+
+        function updateReasoning(k, colors, n) {
+            const unitName = currentMode === 'word' ? 'tiếng' : 'chữ';
+            const unitNameCap = currentMode === 'word' ? 'Tiếng' : 'Chữ';
+
+            // Update title and question
+            document.getElementById('reasoningTitle').textContent = `Lập Luận: Tìm Màu Của ${unitNameCap} Thứ n`;
+            document.getElementById('reasoningQuestion').textContent = `Làm thế nào để tìm màu của ${unitName} thứ n?`;
+
+            // Update unit names throughout
+            document.getElementById('unitNameStep1').textContent = unitName;
+            document.getElementById('unitNameStep2').textContent = unitName;
+            document.getElementById('unitNameStep3').textContent = unitName;
+            document.getElementById('unitNameRule').textContent = unitNameCap;
+            document.getElementById('unitNameRule2').textContent = unitNameCap;
+
+            // Update number of colors
+            document.getElementById('numColors').textContent = k;
+
+            // Update step 1 example
+            document.getElementById('colorCycleExample').innerHTML = `• ${unitNameCap} 1 → Màu 1, ${unitNameCap} 2 → Màu 2, ..., ${unitNameCap} k → Màu k<br>
+               • ${unitNameCap} k+1 → Màu 1, ${unitNameCap} k+2 → Màu 2, ... (lặp lại)`;
+
+            // Update example tip with current values
+            const remainder = n % k;
+            const displayRemainder = remainder === 0 ? k : remainder;
+            const quotient = Math.floor(n / k);
+            const colorIndex = displayRemainder - 1;
+            const colorName = colors[colorIndex] ? colors[colorIndex].name : 'Màu ' + displayRemainder;
+
+            let exampleHtml = `<strong>Áp dụng:</strong> Với k = ${k} màu, tìm màu của ${unitName} thứ ${n}:
+                <br>${n} ÷ ${k} = ${quotient} dư <strong>${remainder}</strong>`;
+
+            if (remainder === 0) {
+                exampleHtml += ` → r = 0, nên ${unitName} ${n} có màu thứ <strong>${k}</strong> (màu cuối)`;
+            } else {
+                exampleHtml += ` → ${unitNameCap} ${n} có màu thứ <strong>${remainder}</strong>`;
+            }
+            exampleHtml += ` = <strong style="color: ${colors[colorIndex] ? colors[colorIndex].hex : '#666'}">${colorName.toUpperCase()}</strong>`;
+
+            document.getElementById('exampleTip').innerHTML = exampleHtml;
+
+            if (currentMode === 'word') {
+                // Word mode: cycle is based on words per phrase
+                const phraseWordCount = words.length;
+                const cycleLcm = lcm(phraseWordCount, k);
+                const repeatCycle = cycleLcm / phraseWordCount;
+
+                document.getElementById('repeatCycle').textContent = repeatCycle;
+                document.getElementById('totalCharsInCycle').textContent = cycleLcm + ' tiếng';
+
+                generateWordCycleVisualization(repeatCycle, k, colors);
+            } else {
+                // Letter mode: cycle is based on chars per phrase
+                const phraseLen = charsOnly.length;
+                const cycleLcm = lcm(phraseLen, k);
+                const repeatCycle = cycleLcm / phraseLen;
+
+                document.getElementById('repeatCycle').textContent = repeatCycle;
+                document.getElementById('totalCharsInCycle').textContent = cycleLcm + ' chữ';
+
+                generateWordCycleVisualization(repeatCycle, k, colors);
+            }
+        }
+
+        // Unified cycle visualization - always show letters
+        // colors parameter contains the explicit colors array to use
+        function generateWordCycleVisualization(repeatCycle, k, colors) {
+            const container = document.getElementById('wordCycleVisualization');
+            container.innerHTML = '';
+
+            if (!colors || colors.length === 0) return;
+
+            // Helper to get color at position from passed colors array
+            function getColor(n) {
+                const remainder = n % k;
+                const index = remainder === 0 ? k - 1 : remainder - 1;
+                return colors[index];
+            }
+
+            const showReps = Math.min(repeatCycle + 1, 6);
+
+            for (let rep = 0; rep < showReps; rep++) {
+                const repDiv = document.createElement('div');
+                repDiv.className = 'word-cycle-box';
+                repDiv.style.marginBottom = '10px';
+
+                const title = document.createElement('div');
+                title.style.marginBottom = '10px';
+                title.style.fontWeight = 'bold';
+                if (rep === repeatCycle && repeatCycle <= 5) {
+                    title.innerHTML = `Lần ${rep + 1}: <span style="color: #4caf50;">← Màu lặp lại như lần 1!</span>`;
+                } else {
+                    title.textContent = `Lần ${rep + 1}:`;
+                }
+                repDiv.appendChild(title);
+
+                const wordsDiv = document.createElement('div');
+                wordsDiv.className = 'word-cycle-display';
+
+                let letterIndex = rep * charsOnly.length;
+                let wordNum = rep * words.length;
+
+                words.forEach((word, wordIdx) => {
+                    wordNum++;
+
+                    if (wordIdx > 0) {
+                        const space = document.createElement('span');
+                        space.style.width = '15px';
+                        wordsDiv.appendChild(space);
+                    }
+
+                    const wordSpan = document.createElement('span');
+                    wordSpan.style.display = 'flex';
+                    wordSpan.style.gap = '2px';
+
+                    for (let i = 0; i < word.length; i++) {
+                        letterIndex++;
+                        // In word mode: all letters in same word have same color
+                        // In letter mode: each letter has its own color
+                        const color = currentMode === 'word'
+                            ? getColor(wordNum)
+                            : getColor(letterIndex);
+
+                        const charSpan = document.createElement('span');
+                        charSpan.className = 'word-char';
+                        charSpan.style.backgroundColor = color ? color.hex : '#999';
+                        charSpan.textContent = word[i];
+                        charSpan.title = `Tiếng ${wordNum} - Chữ ${letterIndex}`;
+                        wordSpan.appendChild(charSpan);
+                    }
+
+                    wordsDiv.appendChild(wordSpan);
+                });
+
+                repDiv.appendChild(wordsDiv);
+                container.appendChild(repDiv);
+            }
+
+            if (repeatCycle > 5) {
+                const note = document.createElement('div');
+                note.style.textAlign = 'center';
+                note.style.color = '#666';
+                note.style.fontStyle = 'italic';
+                note.textContent = `... (chu kỳ lặp lại sau ${repeatCycle} lần viết)`;
+                container.appendChild(note);
+            }
+        }
+
+        // Main visualization - always shows letters, colors based on mode
+        // colors parameter contains the explicit colors array to use
+        function generateLetterVisualization(highlightN, colors) {
+            const container = document.getElementById('charsContainer');
+            container.innerHTML = '';
+
+            if (!colors || colors.length === 0) {
+                container.innerHTML = '<span style="color: #999;">Chưa chọn màu</span>';
+                return;
+            }
+
+            const k = colors.length;
+            // Calculate cycle length in words (when word colors repeat)
+            const wordCycleLength = lcm(words.length, k); // LCM of (words per phrase, k colors)
+
+            // Helper to get color at position from passed colors array
+            function getColor(n) {
+                const remainder = n % k;
+                const index = remainder === 0 ? k - 1 : remainder - 1;
+                return colors[index];
+            }
+
+            // Determine how many letters to show based on searchType
+            let totalLetters;
+            if (searchType === 'word') {
+                // Searching by word: need more letters to show word context
+                totalLetters = Math.max((highlightN + 10) * 4, 60);
+            } else {
+                // Searching by letter
+                totalLetters = Math.max(highlightN + 20, 60);
+            }
+
+            let letterCount = 0;
+            let prevWordNum = 0;
+
+            while (letterCount < Math.min(totalLetters, 300)) {
+                for (let i = 0; i < phrase.length && letterCount < Math.min(totalLetters, 300); i++) {
+                    const char = phrase[i];
+
+                    if (char === ' ') {
+                        const span = document.createElement('span');
+                        span.className = 'char space';
+                        span.textContent = ' ';
+                        container.appendChild(span);
+                    } else {
+                        letterCount++;
+
+                        // Track which word this letter belongs to
+                        const wordInfo = getWordInfo(letterCount);
+                        const currentWordNum = wordInfo ? wordInfo.wordNum : 1;
+
+                        // Add line break after every wordCycleLength words (at start of new word)
+                        if (currentWordNum !== prevWordNum && prevWordNum > 0 && prevWordNum % wordCycleLength === 0) {
+                            const cycleNum = prevWordNum / wordCycleLength;
+                            const lineBreak = document.createElement('div');
+                            lineBreak.style.width = '100%';
+                            lineBreak.style.borderTop = '2px dashed #667eea';
+                            lineBreak.style.margin = '10px 0';
+                            lineBreak.style.paddingTop = '5px';
+                            lineBreak.style.fontSize = '12px';
+                            lineBreak.style.color = '#667eea';
+                            lineBreak.style.textAlign = 'center';
+                            lineBreak.innerHTML = `── Hết chu kỳ ${cycleNum} (${wordCycleLength} tiếng) ── Bắt đầu chu kỳ ${cycleNum + 1} ──`;
+                            container.appendChild(lineBreak);
+                        }
+                        prevWordNum = currentWordNum;
+
+                        // Get color based on currentMode (coloring mode)
+                        const color = currentMode === 'word'
+                            ? getColor(currentWordNum)
+                            : getColor(letterCount);
+
+                        // Determine if this should be highlighted based on searchType
+                        let isHighlighted = false;
+                        if (searchType === 'word') {
+                            isHighlighted = currentWordNum === highlightN;
+                        } else {
+                            isHighlighted = letterCount === highlightN;
+                        }
+
+                        const span = document.createElement('span');
+                        span.className = 'char' + (isHighlighted ? ' highlight' : '');
+                        span.style.backgroundColor = color.hex;
+                        span.textContent = char;
+
+                        const numberSpan = document.createElement('span');
+                        numberSpan.className = 'char-number';
+                        numberSpan.innerHTML = `T${currentWordNum} C${letterCount}`;
+                        span.appendChild(numberSpan);
+
+                        container.appendChild(span);
+                    }
+                }
+
+                if (letterCount < Math.min(totalLetters, 300)) {
+                    const span = document.createElement('span');
+                    span.className = 'char space';
+                    span.textContent = ' ';
+                    container.appendChild(span);
+                }
+            }
+
+            setTimeout(() => {
+                const highlighted = container.querySelector('.highlight');
+                if (highlighted) {
+                    highlighted.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }, 100);
+        }
+
+        // Event listeners
+        document.getElementById('colorCount').addEventListener('change', function() {
+            const maxColors = parseInt(this.value) || 4;
+            if (maxColors < 2) this.value = 2;
+            if (maxColors > 10) this.value = 10;
+
+            if (selectedColors.length > maxColors) {
+                selectedColors = selectedColors.slice(0, maxColors);
+            }
+            updateAllDisplays();
+        });
+
+        document.getElementById('charNumber').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                calculate();
+            }
+        });
+
+        document.getElementById('phraseInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                updatePhrase();
+            }
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            initColorPalette();
+            resetColors();
+            setMode('word'); // Default to word mode
+        });
+    </script>
+</body>
+</html>
